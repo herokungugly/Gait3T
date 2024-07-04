@@ -450,7 +450,7 @@ class Gait3T(BaseModel):
         ske_logits = ske_feat['softmax']['logits']
         sil_embed = sil_feat['triplet']['embeddings']
         ske_embed = ske_feat['triplet']['embeddings']
-        ske_feat_transpose = sil_embed.transpose(0, 1).contiguous()  # [embed_size, n, separate_fc_cnt]
+        sil_feat_transpose = sil_embed.transpose(0, 1).contiguous()  # [embed_size, n, separate_fc_cnt]
         ske_feat_transpose = ske_embed.transpose(0, 1).contiguous()  # [embed_size, n, separate_fc_cnt]
         with torch.no_grad():
            sil_anchor_feat_transpose = self.frozen_tower(([sils], labs, typs, vies, seqL))['training_feat']['triplet']['embeddings'].transpose(0, 1).contiguous()
