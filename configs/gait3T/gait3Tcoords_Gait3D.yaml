@@ -64,22 +64,6 @@ loss_cfg:
 
 model_cfg:
   model: Gait3T_coords
-  ske_model_cfg:
-    model: GaitGraph2
-    joint_format: coco
-    input_num: 3
-    reduction: 8
-    block: Bottleneck # Basic, initial
-    input_branch:
-      - 5
-      - 64
-      - 32
-    main_stream:
-      - 32
-      - 128
-      - 256
-    num_class: 128
-    tta: true
   ske_model: 
     out_dim: 256
 
