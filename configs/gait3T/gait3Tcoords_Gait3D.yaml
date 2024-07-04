@@ -1,0 +1,128 @@
+data_cfg:
+  dataset_name: Gait3D
+  dataset_root: /mnt/pami201/cxye/GAIT3D/coords_sils
+  dataset_partition: ./datasets/Gait3D/Gait3Dlite.json
+  num_workers: 1
+  # cache: true
+  data_in_use: [True, True]
+  remove_no_gallery: false
+  test_dataset_name: Gait3D
+
+evaluator_cfg:
+  enable_distributed: true
+  enable_float16: false
+  restore_ckpt_strict: true
+  restore_hint: 80000
+  save_name: gait3Tcoords
+  eval_func: evaluate_Gait3D
+  sampler:
+    batch_shuffle: false
+    batch_size: 4 #equal to gpus
+    sample_type: all_ordered
+    frames_all_limit: 720
+    type: InferenceSampler
+  metric: euc
+  transform:
+    - img_w: 64
+      type: BaseSilCuttingTransform
+
+
+loss_cfg:
+  - loss_term_weight: 0.5
+    scale: 1
+    type: SupervisedContrastiveLoss
+    log_prefix: sil_supcl
+    log_accuracy: true
+  - loss_term_weight: 0.5
+    scale: 1
+    type: SupervisedContrastiveLoss
+    log_prefix: ske_supcl
+    log_accuracy: true
+  - loss_term_weight: 1.0
+    scale: 1
+    type: SupervisedContrastiveLoss
+    log_prefix: sil_anchor_supcl
+    log_accuracy: true
+  - loss_term_weights: 1.0
+    margin: 0.2
+    type: TripletLoss
+    log_prefix: sil_triplet
+  - loss_term_weights: 1.0
+    margin: 0.2
+    type: TripletLoss
+    log_prefix: ske_triplet
+  - loss_term_weight: 1.0
+    scale: 16
+    type: CrossEntropyLoss
+    log_prefix: sil_softmax
+    log_accuracy: true
+  - loss_term_weight: 1.0
+    scale: 16
+    type: CrossEntropyLoss
+    log_prefix: ske_softmax
+    log_accuracy: true
+
+model_cfg:
+  model: Gait3T_coords
+  ske_model_cfg:
+    model: GaitGraph2
+    joint_format: coco
+    input_num: 3
+    reduction: 8
+    block: Bottleneck # Basic, initial
+    input_branch:
+      - 5
+      - 64
+      - 32
+    main_stream:
+      - 32
+      - 128
+      - 256
+    num_class: 128
+    tta: true
+  ske_model: 
+    out_dim: 256
+
+optimizer_cfg:
+  lr: 1.0e-4
+  solver: Adam
+  weight_decay: 1.0e-5
+
+scheduler_cfg:
+  gamma: 0.1
+  milestones:
+    - 20000
+  # scheduler: LambdaLR
+  scheduler: MultiStepLR
+
+trainer_cfg:
+  enable_float16: true
+  find_unused_parameters: true
+  with_test: false
+  log_iter: 100
+  restore_ckpt_strict: true
+  # frozen_restore_hint:  # TODO:
+  restore_hint: 0
+  save_iter: 10000
+  save_name: gait3T
+  total_iter: 100000
+  sampler:
+    batch_shuffle: true
+    batch_size:
+      - 32
+      - 4
+    frames_num_fixed: 30
+    # fixed frames number for training
+    frames_skip_num: 4
+    sample_type: fixed_ordered
+    type: TripletSampler
+  transform:
+    - type: Compose
+      trf_cfg:
+        - type: RandomPerspective
+          prob: 0.2
+        - type: BaseSilCuttingTransform
+        - type: RandomHorizontalFlip
+          prob: 0.2
+        - type: RandomRotate
+          prob: 0.2
