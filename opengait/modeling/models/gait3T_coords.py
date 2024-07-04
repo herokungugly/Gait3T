@@ -22,14 +22,14 @@ class GaitGraph2(nn.Module):
     """
     def build_network(self, model_cfg):
          
-        self.joint_format = model_cfg['joint_format']
-        self.input_num = model_cfg['input_num']
-        self.block = model_cfg['block']
-        self.input_branch = model_cfg['input_branch']
-        self.main_stream = model_cfg['main_stream']
-        self.num_class = model_cfg['num_class']
-        self.reduction = model_cfg['reduction']
-        self.tta = model_cfg['tta']
+        self.joint_format = coco
+        self.input_num = 3
+        self.block = Bottleneck
+        self.input_branch = [5, 64, 32]
+        self.main_stream = [32, 128, 256]
+        self.num_class = 128
+        self.reduction = 8
+        self.tta = True
         ## Graph Init ##
         self.graph = Graph(joint_format=self.joint_format,max_hop=3)
         self.A = torch.tensor(self.graph.A, dtype=torch.float32, requires_grad=False)
