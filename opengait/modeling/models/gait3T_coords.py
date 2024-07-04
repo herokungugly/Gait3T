@@ -399,20 +399,18 @@ class Gait3T_coords(BaseModel):
     def forward(self, inputs):
         ipts, labs, typs, vies, seqL = inputs
 
-        pose = ipts[0]
-        print(len(pose))
-        maps = pose[0]
-        sils = pose[1]
+        ske = ipts[0]
+        sils = ipts[1]
         pose = sils.transpose(1, 2).contiguous()
 
         del ipts
         sil_feat = self.sil_model(([sils], labs, typs, vies, seqL))['training_feat']
-        ske_feat = self.ske_model(([maps], labs, typs, vies, seqL))['training_feat']
+        ske_feat = self.ske_model(([ske], labs, typs, vies, seqL))['training_feat']
 
         sil_logits = sil_feat['softmax']['logits']
-        ske_logits = ske_feat['softmax']['logits']
+        # ske_logits = ske_feat['']['logits']
         sil_embed = sil_feat['triplet']['embeddings']
-        ske_embed = ske_feat['triplet']['embeddings']
+        ske_embed = ske_feat['SupConLoss']['features']
         sil_feat_transpose = sil_embed.transpose(0, 1).contiguous()  # [embed_size, n, separate_fc_cnt]
         ske_feat_transpose = ske_embed.transpose(0, 1).contiguous()  # [embed_size, n, separate_fc_cnt]
         with torch.no_grad():
@@ -429,7 +427,7 @@ class Gait3T_coords(BaseModel):
                 'sil_triplet': {'embeddings': sil_embed, 'labels': labs},
                 'ske_triplet': {'embeddings': ske_embed, 'labels': labs},
                 'sil_softmax': {'logits': sil_logits, 'labels': labs},
-                'ske_softmax': {'logits': ske_logits, 'labels': labs},
+                # 'ske_softmax': {'logits': ske_logits, 'labels': labs},
             },
             'visual_summary': {
                 'image/sils': rearrange(pose * 255., 'n c s h w -> (n s) c h w'),
@@ -439,3 +437,4 @@ class Gait3T_coords(BaseModel):
             }
         }
         return retval
+
