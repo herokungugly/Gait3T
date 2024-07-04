@@ -102,20 +102,20 @@ trainer_cfg:
     type: TripletSampler
   transform:
       - type: Compose
-      trf_cfg:
-        - type: FlipSequence
-          probability: 0.5
-        - type: InversePosesPre
-          probability: 0.1
-        - type:  JointNoise
-          std: 0.25
-        - type: PointNoise
-          std: 0.05
-        - type: RandomMove
-          random_r:
-                    - 4
-                    - 1
-        - type: GaitGraphMultiInput
+        trf_cfg:
+          - type: FlipSequence
+            probability: 0.5
+          - type: InversePosesPre
+            probability: 0.1
+          - type:  JointNoise
+            std: 0.25
+          - type: PointNoise
+            std: 0.05
+          - type: RandomMove
+            random_r:
+                      - 4
+                      - 1
+          - type: GaitGraphMultiInput
     - type: Compose
       trf_cfg:
         - type: RandomPerspective
