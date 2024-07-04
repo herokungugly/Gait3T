@@ -64,10 +64,6 @@ loss_cfg:
 
 model_cfg:
   model: Gait3T
-  # sil_model_cfg: "configs/deepgaitv2/DeepGaitV2_gait3d.yaml"
-  # ske_model_cfg: "configs/skeletongait/skeletongait_Gait3D.yaml"
-  # pretrained_model_cfg: "configs/deepgaitv2/DeepGaitV2_gait3d.yaml"
-  # pretrained_model_name: "output/Gait3D/DeepGaitV2/DeepGaitV2/checkpoints/DeepGaitV2-60000.pt"
   ske_model: 
     out_dim: 256
 
@@ -108,21 +104,6 @@ trainer_cfg:
     sample_type: fixed_ordered
     type: TripletSampler
   transform:
-    - type: Compose
-      trf_cfg:
-        - type: FlipSequence
-          probability: 0.5
-        - type: InversePosesPre
-          probability: 0.1
-        - type:  JointNoise
-          std: 0.25
-        - type: PointNoise
-          std: 0.05
-        - type: RandomMove
-          random_r:
-                    - 4
-                    - 1
-        - type: GaitGraphMultiInput
     - type: Compose
       trf_cfg:
         - type: RandomPerspective
