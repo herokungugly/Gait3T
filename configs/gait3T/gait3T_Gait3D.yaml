@@ -28,17 +28,17 @@ evaluator_cfg:
 
 
 loss_cfg:
-  - loss_term_weight: 0.8
+  - loss_term_weight: 0.5
     scale: 1
     type: SupervisedContrastiveLoss
     log_prefix: sil_supcl
     log_accuracy: true
-  - loss_term_weight: 0.8
+  - loss_term_weight: 0.5
     scale: 1
     type: SupervisedContrastiveLoss
     log_prefix: ske_supcl
     log_accuracy: true
-  - loss_term_weight: 0.4
+  - loss_term_weight: 1.0
     scale: 1
     type: SupervisedContrastiveLoss
     log_prefix: sil_anchor_supcl
@@ -51,6 +51,16 @@ loss_cfg:
     margin: 0.2
     type: TripletLoss
     log_prefix: ske_triplet
+  - loss_term_weight: 1.0
+    scale: 16
+    type: CrossEntropyLoss
+    log_prefix: sil_softmax
+    log_accuracy: true
+  - loss_term_weight: 1.0
+    scale: 16
+    type: CrossEntropyLoss
+    log_prefix: ske_softmax
+    log_accuracy: true
 
 model_cfg:
   model: Gait3T
