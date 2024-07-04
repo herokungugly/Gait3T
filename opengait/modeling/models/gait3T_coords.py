@@ -425,7 +425,7 @@ class Gait3T_coords(BaseModel):
                 'ske_supcl': {'projections': proj_per_ske, 'targets': labs},
                 'sil_anchor_supcl': {'projections': proj_per_sil_anchor, 'targets': labs},
                 'sil_triplet': {'embeddings': sil_embed, 'labels': labs},
-                'ske_triplet': {'embeddings': ske_embed, 'labels': labs},
+                'ske_supcon': {'embeddings': ske_embed, 'labels': labs},
                 'sil_softmax': {'logits': sil_logits, 'labels': labs},
                 # 'ske_softmax': {'logits': ske_logits, 'labels': labs},
             },
