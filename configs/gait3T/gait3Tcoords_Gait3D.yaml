@@ -47,19 +47,14 @@ loss_cfg:
     margin: 0.2
     type: TripletLoss
     log_prefix: sil_triplet
-  - loss_term_weights: 1.0
-    margin: 0.2
-    type: TripletLoss
-    log_prefix: ske_triplet
+  - loss_term_weight: 1.0
+    temperature: 0.01
+    type:  SupConLoss_Lp
+    log_prefix: ske_supcon
   - loss_term_weight: 1.0
     scale: 16
     type: CrossEntropyLoss
     log_prefix: sil_softmax
-    log_accuracy: true
-  - loss_term_weight: 1.0
-    scale: 16
-    type: CrossEntropyLoss
-    log_prefix: ske_softmax
     log_accuracy: true
 
 model_cfg:
