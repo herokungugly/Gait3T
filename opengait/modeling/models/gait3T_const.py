@@ -443,10 +443,15 @@ class Gait3T(BaseModel):
         pose = pose.transpose(1, 2).contiguous()
 
         del ipts
-        sil_feat = self.sil_model(([sils], labs, typs, vies, seqL))['training_feat']['triplet']['embeddings']
-        ske_feat = self.ske_model(([maps], labs, typs, vies, seqL))['training_feat']['triplet']['embeddings']
-        sil_feat_transpose = sil_feat.transpose(0, 1).contiguous()  # [embed_size, n, separate_fc_cnt]
-        ske_feat_transpose = ske_feat.transpose(0, 1).contiguous()  # [embed_size, n, separate_fc_cnt]
+        sil_feat = self.sil_model(([sils], labs, typs, vies, seqL))['training_feat']
+        ske_feat = self.ske_model(([maps], labs, typs, vies, seqL))['training_feat']
+
+        sil_logits = sil_feat['softmax']['logits']
+        ske_logits = ske_feat['softmax']['logits']
+        sil_embed = sil_feat['triplet']['embeddings']
+        ske_embed = ske_feat['triplet']['embeddings']
+        ske_feat_transpose = sil_embed.transpose(0, 1).contiguous()  # [embed_size, n, separate_fc_cnt]
+        ske_feat_transpose = ske_embed.transpose(0, 1).contiguous()  # [embed_size, n, separate_fc_cnt]
         with torch.no_grad():
            sil_anchor_feat_transpose = self.frozen_tower(([sils], labs, typs, vies, seqL))['training_feat']['triplet']['embeddings'].transpose(0, 1).contiguous()
         proj_per_sil = sil_feat_transpose @ ske_feat_transpose.transpose(1, 2).contiguous()  # [embed_size, n, separate_fc_cnt] @ [embed_size, separate_fc_cnt, n]
@@ -458,8 +463,10 @@ class Gait3T(BaseModel):
                 'sil_supcl': {'projections': proj_per_sil, 'targets': labs},
                 'ske_supcl': {'projections': proj_per_ske, 'targets': labs},
                 'sil_anchor_supcl': {'projections': proj_per_sil_anchor, 'targets': labs},
-                'sil_triplet': {'embeddings': sil_feat, 'labels': labs},
-                'ske_triplet': {'embeddings': ske_feat, 'labels': labs},
+                'sil_triplet': {'embeddings': sil_embed, 'labels': labs},
+                'ske_triplet': {'embeddings': ske_embed, 'labels': labs},
+                'sil_softmax': {'logits': sil_logits, 'labels': labs},
+                'ske_softmax': {'logits': ske_logits, 'labels': labs},
             },
             'visual_summary': {
                 'image/sils': rearrange(pose * 255., 'n c s h w -> (n s) c h w'),
