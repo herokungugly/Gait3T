@@ -211,7 +211,7 @@ class sils_DeepGaitV2(nn.Module):
         else:
             sils = ipts[0]
             sils = sils.transpose(1, 2).contiguous()
-        assert sils.size(-1) in [44, 88]
+        assert sils.size(-1) in [44, 64, 88]
 
         del ipts
         out0 = self.layer0(sils)
