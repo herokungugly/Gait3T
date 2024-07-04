@@ -20,9 +20,9 @@ class MessageManager:
     def init_manager(self, save_path, log_to_file, log_iter, iteration=0):
         self.iteration = iteration
         self.log_iter = log_iter
-        mkdir(osp.join(save_path, "summary/"))
+        mkdir(osp.join(save_path, "summary/", strftime('%Y-%m-%d-%H-%M-%S', localtime())))
         self.writer = SummaryWriter(
-            osp.join(save_path, "summary/"), purge_step=self.iteration)
+            osp.join(save_path,  "summary/", strftime('%Y-%m-%d-%H-%M-%S', localtime())), purge_step=self.iteration)
         self.init_logger(save_path, log_to_file)
 
     def init_logger(self, save_path, log_to_file):
