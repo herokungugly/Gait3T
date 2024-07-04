@@ -82,7 +82,7 @@ scheduler_cfg:
 #   # warm_up_step: 200
   gamma: 0.1
   milestones:
-    - 70000
+    - 20000
   # scheduler: LambdaLR
   scheduler: MultiStepLR
 
