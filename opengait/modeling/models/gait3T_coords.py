@@ -21,8 +21,8 @@ class GaitGraph2(nn.Module):
         Github:   https://github.com/tteepe/GaitGraph2
     """
     def __init__(self):
-         
-        self.joint_format = coco
+        super(GaitGraph2, self).__init__() 
+        self.joint_format = 'coco'
         self.input_num = 3
         self.block = 'Bottleneck'
         self.input_branch = [5, 64, 32]
