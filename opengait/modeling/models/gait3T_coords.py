@@ -20,11 +20,11 @@ class GaitGraph2(nn.Module):
         Paper:    https://openaccess.thecvf.com/content/CVPR2022W/Biometrics/papers/Teepe_Towards_a_Deeper_Understanding_of_Skeleton-Based_Gait_Recognition_CVPRW_2022_paper
         Github:   https://github.com/tteepe/GaitGraph2
     """
-    def build_network(self, model_cfg):
+    def __init__(self):
          
         self.joint_format = coco
         self.input_num = 3
-        self.block = Bottleneck
+        self.block = 'Bottleneck'
         self.input_branch = [5, 64, 32]
         self.main_stream = [32, 128, 256]
         self.num_class = 128
