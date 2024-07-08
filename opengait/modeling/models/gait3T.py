@@ -425,7 +425,7 @@ class Gait3T(BaseModel):
     def init_parameters(self):
         for name, layer in self.named_modules():
             print(name)
-        for m in self.modules() and :
+        for m in self.modules():
             if isinstance(m, (nn.Conv3d, nn.Conv2d, nn.Conv1d)):
                 nn.init.xavier_uniform_(m.weight.data)
                 if m.bias is not None:
