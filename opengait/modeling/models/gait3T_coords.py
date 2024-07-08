@@ -27,7 +27,7 @@ class GaitGraph2(nn.Module):
         self.block = 'Bottleneck'
         self.input_branch = [5, 64, 32]
         self.main_stream = [32, 128, 256]
-        self.num_class = 128
+        self.num_class = 256
         self.reduction = 8
         self.tta = True
         ## Graph Init ##
@@ -63,7 +63,7 @@ class GaitGraph2(nn.Module):
         if not self.training and self.tta:
             f1, f2, f3 = torch.split(x, [N, N, N], dim=0)
             x = torch.cat((f1, f2, f3), dim=1)
-             
+        
         embed = torch.unsqueeze(x,-1)
         
         retval = {
@@ -405,16 +405,17 @@ class Gait3T_coords(BaseModel):
 
         del ipts
         sil_feat = self.sil_model(([sils], labs, typs, vies, seqL))['training_feat']
-        ske_feat = self.ske_model(([ske], labs, typs, vies, seqL))['training_feat']
+        ske_feat = self.ske_model(([ske], labs, typs, vies, seqL))
 
         sil_logits = sil_feat['softmax']['logits']
-        # ske_logits = ske_feat['']['logits']
+        ske_features = ske_feat['training_feat']['SupConLoss']['features']
         sil_embed = sil_feat['triplet']['embeddings']
-        ske_embed = ske_feat['SupConLoss']['features']
+        ske_embed = ske_feat['inference_feat']['embeddings']
         sil_feat_transpose = sil_embed.transpose(0, 1).contiguous()  # [embed_size, n, separate_fc_cnt]
         ske_feat_transpose = ske_embed.transpose(0, 1).contiguous()  # [embed_size, n, separate_fc_cnt]
         with torch.no_grad():
            sil_anchor_feat_transpose = self.frozen_tower(([sils], labs, typs, vies, seqL))['training_feat']['triplet']['embeddings'].transpose(0, 1).contiguous()
+        print(ske_feat_transpose.shape)
         proj_per_sil = sil_feat_transpose @ ske_feat_transpose.transpose(1, 2).contiguous()  # [embed_size, n, separate_fc_cnt] @ [embed_size, separate_fc_cnt, n]
         proj_per_ske = proj_per_sil.transpose(1, 2).contiguous()
         proj_per_sil_anchor = sil_feat_transpose @ sil_anchor_feat_transpose.transpose(1, 2).contiguous()
@@ -425,7 +426,7 @@ class Gait3T_coords(BaseModel):
                 'ske_supcl': {'projections': proj_per_ske, 'targets': labs},
                 'sil_anchor_supcl': {'projections': proj_per_sil_anchor, 'targets': labs},
                 'sil_triplet': {'embeddings': sil_embed, 'labels': labs},
-                'ske_supcon': {'embeddings': ske_embed, 'labels': labs},
+                'ske_supcon': {'features': ske_features, 'labels': labs},
                 'sil_softmax': {'logits': sil_logits, 'labels': labs},
                 # 'ske_softmax': {'logits': ske_logits, 'labels': labs},
             },
