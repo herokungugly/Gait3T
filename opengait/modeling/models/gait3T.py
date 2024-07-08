@@ -412,6 +412,7 @@ class Gait3T(BaseModel):
         self.sil_model = sils_DeepGaitV2("output/Gait3D/DeepGaitV2/DeepGaitV2/checkpoints/DeepGaitV2-60000.pt")
         self.ske_model = ske_DeepGaitV2()
         self.frozen_tower = sils_Frozen("output/Gait3D/DeepGaitV2/DeepGaitV2/checkpoints/DeepGaitV2-60000.pt")
+        
 
         final_ch = model_cfg['ske_model']['out_dim']
         self.map = nn.Sequential(
@@ -420,6 +421,23 @@ class Gait3T(BaseModel):
             nn.Linear(final_ch, final_ch)
         )
         self.map_pose = nn.Linear(final_ch, final_ch)
+
+    def init_parameters(self):
+        for name, layer in self.named_modules():
+            print(name)
+        for m in self.modules() and :
+            if isinstance(m, (nn.Conv3d, nn.Conv2d, nn.Conv1d)):
+                nn.init.xavier_uniform_(m.weight.data)
+                if m.bias is not None:
+                    nn.init.constant_(m.bias.data, 0.0)
+            elif isinstance(m, nn.Linear):
+                nn.init.xavier_uniform_(m.weight.data)
+                if m.bias is not None:
+                    nn.init.constant_(m.bias.data, 0.0)
+            elif isinstance(m, (nn.BatchNorm3d, nn.BatchNorm2d, nn.BatchNorm1d)):
+                if m.affine:
+                    nn.init.normal_(m.weight.data, 1.0, 0.02)
+                    nn.init.constant_(m.bias.data, 0.0)
          
     def inputs_pretreament(self, inputs):
        ### Ensure the same data augmentation for heatmap and silhouette
@@ -436,7 +454,6 @@ class Gait3T(BaseModel):
            new_data_list.append(cat_data)
        new_inputs = [[new_data_list], inputs[1], inputs[2], inputs[3], inputs[4]]
        return super().inputs_pretreament(new_inputs)
-
 
     def forward(self, inputs):
         ipts, labs, typs, vies, seqL = inputs
