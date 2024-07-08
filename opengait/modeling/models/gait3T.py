@@ -21,7 +21,7 @@ blocks_map = {
 
 class sils_DeepGaitV2(nn.Module):
 
-    def __init__(self):
+    def __init__(self, save_name):
         super(sils_DeepGaitV2, self).__init__()
         mode = "p3d"
         block = blocks_map[mode]
@@ -30,6 +30,7 @@ class sils_DeepGaitV2(nn.Module):
         layers = [1, 4, 4, 1]
         channels = [64, 128, 256, 512]
         self.inference_use_emb2 = False
+        self.device = torch.distributed.get_rank()
 
         if mode == '3d':
             strides = [
@@ -69,6 +70,10 @@ class sils_DeepGaitV2(nn.Module):
 
         self.TP = PackSequenceWrapper(torch.max)
         self.HPP = HorizontalPoolingPyramid(bin_num=[16])
+
+        checkpoint = torch.load(save_name, map_location=torch.device("cuda", self.device))
+        model_state_dict = checkpoint['model']
+        self.load_state_dict(model_state_dict)
 
     def make_layer(self, block, planes, stride, blocks_num, mode='2d'):
 
@@ -282,7 +287,6 @@ class sils_Frozen(nn.Module):
         layers = [1, 4, 4, 1]
         channels = [64, 128, 256, 512]
         self.inference_use_emb2 = False
-        # self.device = device
         self.device = torch.distributed.get_rank()
 
         if mode == '3d':
@@ -405,7 +409,7 @@ class sils_Frozen(nn.Module):
 class Gait3T(BaseModel):
 
     def build_network(self, model_cfg):
-        self.sil_model = sils_DeepGaitV2()
+        self.sil_model = sils_DeepGaitV2("output/Gait3D/DeepGaitV2/DeepGaitV2/checkpoints/DeepGaitV2-60000.pt")
         self.ske_model = ske_DeepGaitV2()
         self.frozen_tower = sils_Frozen("output/Gait3D/DeepGaitV2/DeepGaitV2/checkpoints/DeepGaitV2-60000.pt")
 
