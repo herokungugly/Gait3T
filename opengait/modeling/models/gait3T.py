@@ -426,7 +426,6 @@ class Gait3T(BaseModel):
         for name, m in self.named_modules():
             tower_name = name.split(".")
             if tower_name[0] not in self.non_init_list:
-                print(name)
                 if isinstance(m, (nn.Conv3d, nn.Conv2d, nn.Conv1d)):
                     nn.init.xavier_uniform_(m.weight.data)
                     if m.bias is not None:
