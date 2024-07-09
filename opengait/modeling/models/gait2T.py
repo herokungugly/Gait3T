@@ -21,7 +21,7 @@ blocks_map = {
 
 class sils_DeepGaitV2(nn.Module):
 
-    def __init__(self, save_name):
+    def __init__(self, save_name=""):
         super(sils_DeepGaitV2, self).__init__()
         mode = "p3d"
         block = blocks_map[mode]
