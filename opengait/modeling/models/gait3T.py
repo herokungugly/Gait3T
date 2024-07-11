@@ -493,7 +493,7 @@ class Gait3T(BaseModel):
                 'image/sils': rearrange(pose * 255., 'n c s h w -> (n s) c h w'),
             },
             'inference_feat': {
-                'embeddings': ske_embed
+                'embeddings': sil_embed
             }
         }
         return retval
