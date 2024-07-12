@@ -505,7 +505,7 @@ class Gait3T(BaseModel):
                 'embeddings': sil_embed
             }
         }
-        reval['visual_summary'].update(self.log_grad()) # adds grads to tensorboard
+        retval['visual_summary'].update(self.log_grad()) # adds grads to tensorboard
         return retval
 
 
