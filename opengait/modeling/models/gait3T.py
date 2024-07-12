@@ -459,9 +459,8 @@ class Gait3T(BaseModel):
         grad_dict = {}
         for name, param in self.named_parameters():
             if param.grad is not None:
-                # self.msg_mgr.write_to_tensorboard(summary)
-                # writer.add_histogram(f'{name}.grad', param.grad, epoch * len(data_loader) + batch_idx)
-                grad_dict[f'histogram/{name}.grad'] = param.grad
+                if grad.abs().sum() > 0 and not torch.isnan(grad).any() and not torch.isinf(grad).any():
+                    grad_dict[f'histogram/{name}.grad'] = param.grad
         return grad_dict
 
     def forward(self, inputs):
