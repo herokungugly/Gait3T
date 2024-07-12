@@ -14,7 +14,7 @@ import logging
 class MessageManager:
     def __init__(self):
         self.info_dict = Odict()
-        self.writer_hparams = ['image', 'scalar']
+        self.writer_hparams = ['image', 'scalar', 'histogram']
         self.time = time.time()
 
     def init_manager(self, save_path, log_to_file, log_iter, iteration=0):
