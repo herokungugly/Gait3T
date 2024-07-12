@@ -457,7 +457,7 @@ class Gait3T(BaseModel):
     
     def log_grad(self):
         grad_dict = {}
-        for name, param in model.named_parameters():
+        for name, param in self.named_parameters():
             if param.grad is not None:
                 # self.msg_mgr.write_to_tensorboard(summary)
                 # writer.add_histogram(f'{name}.grad', param.grad, epoch * len(data_loader) + batch_idx)
