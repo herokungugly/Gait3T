@@ -454,6 +454,15 @@ class Gait3T(BaseModel):
            new_data_list.append(cat_data)
        new_inputs = [[new_data_list], inputs[1], inputs[2], inputs[3], inputs[4]]
        return super().inputs_pretreament(new_inputs)
+    
+    def log_grad(self):
+        grad_dict = {}
+        for name, param in model.named_parameters():
+            if param.grad is not None:
+                # self.msg_mgr.write_to_tensorboard(summary)
+                # writer.add_histogram(f'{name}.grad', param.grad, epoch * len(data_loader) + batch_idx)
+                grad_dict[f'histogram/{name}.grad'] = param.grad
+        return grad_dict
 
     def forward(self, inputs):
         ipts, labs, typs, vies, seqL = inputs
@@ -490,12 +499,13 @@ class Gait3T(BaseModel):
                 'ske_softmax': {'logits': ske_logits, 'labels': labs},
             },
             'visual_summary': {
-                'image/sils': rearrange(pose * 255., 'n c s h w -> (n s) c h w'),
+                'image/sils': rearrange(pose * 255., 'n c s h w -> (n s) c h w')
             },
             'inference_feat': {
                 'embeddings': sil_embed
             }
         }
+        reval['visual_summary'].update(self.log_grad()) # adds grads to tensorboard
         return retval
 
 
