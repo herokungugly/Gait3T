@@ -325,6 +325,14 @@ class Gait2T(BaseModel):
        new_inputs = [[new_data_list], inputs[1], inputs[2], inputs[3], inputs[4]]
        return super().inputs_pretreament(new_inputs)
 
+    def log_grad(self):
+        grad_dict = {}
+        for name, param in self.named_parameters():
+            if param.grad is not None:
+                if grad.abs().sum() > 0 and not torch.isnan(grad).any() and not torch.isinf(grad).any():
+                    grad_dict[f'histogram/{name}.grad'] = param.grad
+        return grad_dict
+        
     def forward(self, inputs):
         ipts, labs, typs, vies, seqL = inputs
 
@@ -362,5 +370,6 @@ class Gait2T(BaseModel):
                 'embeddings': ske_embed
             }
         }
+        retval['visual_summary'].update(self.log_grad()) # adds grads to tensorboard
         return retval
 
