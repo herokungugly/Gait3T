@@ -13,7 +13,7 @@ evaluator_cfg:
   enable_float16: false
   restore_ckpt_strict: true
   restore_hint: 60000
-  save_name: gait3T
+  save_name: gait3Tlite
   eval_func: evaluate_Gait3D
   sampler:
     batch_shuffle: false
@@ -90,15 +90,15 @@ trainer_cfg:
   log_iter: 100
   restore_ckpt_strict: true
   # frozen_restore_hint:  # TODO:
-  restore_hint: 10000
+  restore_hint: 0
   save_iter: 5000
-  save_name: gait3T
-  total_iter: 100000
+  save_name: gait3Tlite
+  total_iter: 60000
   sampler:
     batch_shuffle: true
     batch_size:
-      - 32
-      - 4
+      - 8
+      - 2
     frames_num_fixed: 30
     # fixed frames number for training
     frames_skip_num: 4

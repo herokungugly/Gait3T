@@ -330,7 +330,8 @@ class Gait2T(BaseModel):
         for name, param in self.named_parameters():
             if param.grad is not None:
                 if param.grad.abs().sum() > 0 and not torch.isnan(param.grad).any() and not torch.isinf(param.grad).any():
-                    grad_dict[f'histogram/{name}.grad'] = param.grad
+                    grad = param.grad
+                    grad_dict[f'histogram/{name}.grad'] = grad.detach().cpu().numpy().astype(float)
         return grad_dict
         
     def forward(self, inputs):
