@@ -329,7 +329,7 @@ class Gait2T(BaseModel):
         grad_dict = {}
         for name, param in self.named_parameters():
             if param.grad is not None:
-                if grad.abs().sum() > 0 and not torch.isnan(param.grad).any() and not torch.isinf(param.grad).any():
+                if param.grad.abs().sum() > 0 and not torch.isnan(param.grad).any() and not torch.isinf(param.grad).any():
                     grad_dict[f'histogram/{name}.grad'] = param.grad
         return grad_dict
         
