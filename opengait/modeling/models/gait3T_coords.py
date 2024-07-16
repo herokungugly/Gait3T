@@ -431,7 +431,7 @@ class Gait3T_coords(BaseModel):
                 # 'ske_softmax': {'logits': ske_logits, 'labels': labs},
             },
             'visual_summary': {
-                'image/sils': rearrange(pose * 255., 'n c s h w -> (n s) c h w'),
+                'image/sils': ske_feat['visual_summary']['image/sils'],
             },
             'inference_feat': {
                 'embeddings': ske_feat
