@@ -401,7 +401,6 @@ class Gait3T_coords(BaseModel):
 
         ske = ipts[0]
         sils = ipts[1]
-        pose = sils.transpose(1, 2).contiguous()
 
         del ipts
         sil_feat = self.sil_model(([sils], labs, typs, vies, seqL))['training_feat']
@@ -431,7 +430,7 @@ class Gait3T_coords(BaseModel):
                 # 'ske_softmax': {'logits': ske_logits, 'labels': labs},
             },
             'visual_summary': {
-                'image/sils': ske_feat['visual_summary']['image/sils'],
+                'image/sils': ske_feat['visual_summary']['image/pose'],
             },
             'inference_feat': {
                 'embeddings': ske_feat
