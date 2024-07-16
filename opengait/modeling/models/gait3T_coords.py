@@ -389,7 +389,6 @@ class Gait3T_coords(BaseModel):
         self.frozen_tower = sils_Frozen("output/Gait3D/DeepGaitV2/DeepGaitV2/checkpoints/DeepGaitV2-60000.pt")
 
         final_ch = model_cfg['ske_model']['out_dim']
-        self.strip_num = model_cfg['sil_model']['strip_num']
         self.map = nn.Sequential(
             nn.Linear(256, 1),
             nn.LeakyReLU(),
@@ -413,7 +412,7 @@ class Gait3T_coords(BaseModel):
         sil_embed = sil_feat['triplet']['embeddings']
         ske_embed = ske_feat['inference_feat']['embeddings']
         sil_feat_transpose = sil_embed.transpose(0, 1).contiguous()  # [embed_size, n, separate_fc_cnt]
-        ske_feat_transpose = ske_embed.transpose(0, 1).contiguous().repeat(1, self.strip_num, 1)  # [embed_size, n, separate_fc_cnt]
+        ske_feat_transpose = ske_embed.transpose(0, 1).contiguous().repeat(1, 1, sil_embed.shape[-1])  # [embed_size, n, separate_fc_cnt]
         with torch.no_grad():
            sil_anchor_feat_transpose = self.frozen_tower(([sils], labs, typs, vies, seqL))['training_feat']['triplet']['embeddings'].transpose(0, 1).contiguous()
         print(ske_feat_transpose.shape)
