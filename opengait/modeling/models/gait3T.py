@@ -505,7 +505,8 @@ class Gait3T(BaseModel):
                 'image/sils': rearrange(pose * 255., 'n c s h w -> (n s) c h w')
             },
             'inference_feat': {
-                'embeddings': sil_anchor_feat['triplet']['embeddings']
+                # 'embeddings': sil_anchor_feat['triplet']['embeddings']
+                'embeddings': torch.cat((sil_embed, sil_anchor_feat['triplet']['embeddings']), 1)
             }
         }
         retval['visual_summary'].update(self.log_grad()) # adds grads to tensorboard
