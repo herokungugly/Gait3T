@@ -12,7 +12,7 @@ evaluator_cfg:
   enable_distributed: true
   enable_float16: false
   restore_ckpt_strict: true
-  restore_hint: 80000
+  restore_hint: 60000
   save_name: gait3Tcoords
   eval_func: evaluate_Gait3D
   sampler:
@@ -71,11 +71,13 @@ scheduler_cfg:
   gamma: 0.1
   milestones:
     - 20000
+    - 40000
+    - 50000
   # scheduler: LambdaLR
   scheduler: MultiStepLR
 
 trainer_cfg:
-  enable_float16: true
+  enable_float16: false
   find_unused_parameters: true
   with_test: false
   log_iter: 100
@@ -83,8 +85,8 @@ trainer_cfg:
   # frozen_restore_hint:  # TODO:
   restore_hint: 0
   save_iter: 10000
-  save_name: gait3T
-  total_iter: 100000
+  save_name: gait3Tcoords
+  total_iter: 60000
   sampler:
     batch_shuffle: true
     batch_size:
