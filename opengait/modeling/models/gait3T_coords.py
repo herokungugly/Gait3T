@@ -387,6 +387,7 @@ class Gait3T_coords(BaseModel):
         self.sil_model = sils_DeepGaitV2()
         self.ske_model = GaitGraph2()
         self.frozen_tower = sils_Frozen("output/Gait3D/DeepGaitV2/DeepGaitV2/checkpoints/DeepGaitV2-60000.pt")
+        self.non_init_list = ["frozen_tower"]
 
         final_ch = model_cfg['ske_model']['out_dim']
         self.map = nn.Sequential(
@@ -395,6 +396,32 @@ class Gait3T_coords(BaseModel):
             nn.Linear(final_ch, final_ch)
         )
         self.map_pose = nn.Linear(final_ch, final_ch)
+
+    def init_parameters(self):
+        for name, m in self.named_modules():
+            tower_name = name.split(".")
+            if tower_name[0] not in self.non_init_list:
+                if isinstance(m, (nn.Conv3d, nn.Conv2d, nn.Conv1d)):
+                    nn.init.xavier_uniform_(m.weight.data)
+                    if m.bias is not None:
+                        nn.init.constant_(m.bias.data, 0.0)
+                elif isinstance(m, nn.Linear):
+                    nn.init.xavier_uniform_(m.weight.data)
+                    if m.bias is not None:
+                        nn.init.constant_(m.bias.data, 0.0)
+                elif isinstance(m, (nn.BatchNorm3d, nn.BatchNorm2d, nn.BatchNorm1d)):
+                    if m.affine:
+                        nn.init.normal_(m.weight.data, 1.0, 0.02)
+                        nn.init.constant_(m.bias.data, 0.0)
+    
+    def log_grad(self):
+        grad_dict = {}
+        for name, param in self.named_parameters():
+            if param.grad is not None:
+                if param.grad.abs().sum() > 0 and not torch.isnan(param.grad).any() and not torch.isinf(param.grad).any():
+                    grad = param.grad
+                    grad_dict[f'histogram/{name}.grad'] = grad.detach().cpu().numpy().astype(float)
+        return grad_dict
 
     def forward(self, inputs):
         ipts, labs, typs, vies, seqL = inputs
@@ -436,5 +463,6 @@ class Gait3T_coords(BaseModel):
                 'embeddings': ske_feat
             }
         }
+        retval['visual_summary'].update(self.log_grad()) # adds grads to tensorboard
         return retval
 
