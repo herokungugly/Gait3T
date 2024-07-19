@@ -468,8 +468,6 @@ class Gait3T_coords(BaseModel):
             return retval
 
         retval = {
-            'training_feat': {
-            },
             'visual_summary': {
                 'image/sils': ske_feat['visual_summary']['image/pose'],
             },
