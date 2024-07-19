@@ -439,22 +439,26 @@ class Gait3T_coords(BaseModel):
         ske_embed = ske_feat['inference_feat']['embeddings']
         sil_feat_transpose = sil_embed.transpose(0, 1).contiguous()  # [embed_size, n, separate_fc_cnt]
         ske_feat_transpose = ske_embed.transpose(0, 1).contiguous().repeat(1, 1, sil_embed.shape[-1])  # [embed_size, n, separate_fc_cnt]
-        with torch.no_grad():
-           sil_anchor_feat_transpose = self.frozen_tower(([sils], labs, typs, vies, seqL))['training_feat']['triplet']['embeddings'].transpose(0, 1).contiguous()
-        # print(ske_feat_transpose.shape)
-        proj_per_sil = sil_feat_transpose @ ske_feat_transpose.transpose(1, 2).contiguous()  # [embed_size, n, separate_fc_cnt] @ [embed_size, separate_fc_cnt, n]
-        proj_per_ske = proj_per_sil.transpose(1, 2).contiguous()
-        proj_per_sil_anchor = sil_feat_transpose @ sil_anchor_feat_transpose.transpose(1, 2).contiguous()
-
-        retval = {
-            'training_feat': {
+        training_feat = {}
+        if self.training:
+            with torch.no_grad():
+               sil_anchor_feat_transpose = self.frozen_tower(([sils], labs, typs, vies, seqL))['training_feat']['triplet']['embeddings'].transpose(0, 1).contiguous()
+            # print(ske_feat_transpose.shape)
+            proj_per_sil = sil_feat_transpose @ ske_feat_transpose.transpose(1, 2).contiguous()  # [embed_size, n, separate_fc_cnt] @ [embed_size, separate_fc_cnt, n]
+            proj_per_ske = proj_per_sil.transpose(1, 2).contiguous()
+            proj_per_sil_anchor = sil_feat_transpose @ sil_anchor_feat_transpose.transpose(1, 2).contiguous()
+            training_feat = {
                 'sil_supcl': {'projections': proj_per_sil, 'targets': labs},
                 'ske_supcl': {'projections': proj_per_ske, 'targets': labs},
                 'sil_anchor_supcl': {'projections': proj_per_sil_anchor, 'targets': labs},
                 'sil_triplet': {'embeddings': sil_embed, 'labels': labs},
                 'ske_supcon': {'features': ske_features, 'labels': labs},
                 'sil_softmax': {'logits': sil_logits, 'labels': labs},
-                # 'ske_softmax': {'logits': ske_logits, 'labels': labs},
+                # 'ske_softmax': {'logits': ske_logits, 'labels': labs}}
+
+        retval = {
+            'training_feat': {
+                training_feat
             },
             'visual_summary': {
                 'image/sils': ske_feat['visual_summary']['image/pose'],
