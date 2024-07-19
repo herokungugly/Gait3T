@@ -454,7 +454,8 @@ class Gait3T_coords(BaseModel):
                 'sil_triplet': {'embeddings': sil_embed, 'labels': labs},
                 'ske_supcon': {'features': ske_features, 'labels': labs},
                 'sil_softmax': {'logits': sil_logits, 'labels': labs},
-                # 'ske_softmax': {'logits': ske_logits, 'labels': labs}}
+                # 'ske_softmax': {'logits': ske_logits, 'labels': labs}
+            }
 
         retval = {
             'training_feat': {
