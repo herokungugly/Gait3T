@@ -30,17 +30,17 @@ evaluator_cfg:
 loss_cfg:
   - loss_term_weight: 0.5
     scale: 1
-    type: BinaryCrossEntropyLoss
+    type: ClipBinaryCrossEntropyLoss
     log_prefix: sil_bce
     log_accuracy: true
   - loss_term_weight: 0.5
     scale: 1
-    type: BinaryCrossEntropyLoss
+    type: ClipBinaryCrossEntropyLoss
     log_prefix: ske_bce
     log_accuracy: true
   - loss_term_weight: 1.0
     scale: 1
-    type: BinaryCrossEntropyLoss
+    type: ClipBinaryCrossEntropyLoss
     log_prefix: sil_anchor_bce
     log_accuracy: true
   - loss_term_weights: 1.0
