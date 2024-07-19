@@ -3,9 +3,10 @@ import torch
 from .base import BaseLoss
 
 class ClipBinaryCrossEntropyLoss(BaseLoss):
-    def __init__(self, temperature=0.07):
+    def __init__(self, temperature=0.07, eps=1e-5):
         super(ClipBinaryCrossEntropyLoss, self).__init__()
         self.temperature = temperature
+        self.eps = eps
 
     def custom_sigmoid(self, x):
         """
