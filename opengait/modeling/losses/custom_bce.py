@@ -8,21 +8,13 @@ class ClipBinaryCrossEntropyLoss(BaseLoss):
         self.temperature = temperature
         self.eps = eps
 
-    def custom_sigmoid(self, x):
-        """
-        Custom implementation of the sigmoid function.
-        :param x: torch.Tensor
-        :return: torch.Tensor
-        """
-        return 1 / (1 + torch.exp(-x))
-
     def forward(self, projections, targets):
 
         device = torch.device("cuda") if projections.is_cuda else torch.device("cpu")
 
         dot_product_tempered = projections / self.temperature
         # exp_dot_tempered = (torch.exp(dot_product_tempered - torch.max(dot_product_tempered, dim=1, keepdim=True)[0]) + 1e-5)  # softmax for supconloss
-        sigmoid_dot_product = self.custom_sigmoid(dot_product_tempered)
+        sigmoid_dot_product = torch.sigmoid(dot_product_tempered)
   
         mask_similar_class = (targets.unsqueeze(1).repeat(1, targets.shape[0]) == targets).to(device)
         cardinality_per_samples = torch.sum(mask_similar_class, dim = 1)
