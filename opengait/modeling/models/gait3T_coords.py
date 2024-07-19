@@ -472,7 +472,7 @@ class Gait3T_coords(BaseModel):
                 'image/sils': ske_feat['visual_summary']['image/pose'],
             },
             'inference_feat': {
-                'embeddings': ske_embed
+                'embeddings': ske_feat
             }
         }
         retval['visual_summary'].update(self.log_grad()) # adds grads to tensorboard
