@@ -482,28 +482,20 @@ class Gait3Tbce(BaseModel):
         ske_logits = ske_feat['softmax']['logits']
         sil_embed = sil_feat['triplet']['embeddings']
         ske_embed = ske_feat['triplet']['embeddings']
-        sil_feat_transpose = sil_embed  # [n, embed_size, seperate_fc_cnt] # [embed_size, n, separate_fc_cnt]
-        ske_feat_transpose = ske_embed  # [embed_size, n, separate_fc_cnt]
+        sil_feat_transpose = sil_embed.transpose(0, 1).contiguous()  # [embed_size, n, separate_fc_cnt]
+        ske_feat_transpose = ske_embed.transpose(0, 1).contiguous()  # [embed_size, n, separate_fc_cnt]
         with torch.no_grad():
            sil_anchor_feat = self.frozen_tower(([sils], labs, typs, vies, seqL))['training_feat']
-           sil_anchor_feat_transpose = sil_anchor_feat['triplet']['embeddings']
-        # del sil_feat, ske_feat, sil_anchor_feat
-        proj_per_sil = sil_feat_transpose @ ske_feat_transpose.transpose(1, 2).contiguous()  # [n, embed_size, separate_fc_cnt] @ [n, separate_fc_cnt, embed_size]
+           sil_anchor_feat_transpose = sil_anchor_feat['triplet']['embeddings'].transpose(0, 1).contiguous()
+        proj_per_sil = sil_feat_transpose @ ske_feat_transpose.transpose(1, 2).contiguous()  # [embed_size, n, separate_fc_cnt] @ [embed_size, separate_fc_cnt, n] = [embed_size, n, n]
         proj_per_ske = proj_per_sil.transpose(1, 2).contiguous()
         proj_per_sil_anchor = sil_feat_transpose @ sil_anchor_feat_transpose.transpose(1, 2).contiguous()
-        
-        proj_per_sil = proj_per_sil[:, None, :, :]
-        proj_per_ske = proj_per_ske[:, None, :, :]
-        proj_per_sil_anchor = proj_per_sil_anchor[:, None, :, :]
-        # del sil_feat_transpose, ske_feat_transpose
-        print(proj_per_sil.shape)
-        print(labs.shape)
 
         retval = {
             'training_feat': {
-                'sil_bce': {'logits': proj_per_sil, 'labels': labs},
-                'ske_bce': {'logits': proj_per_ske, 'labels': labs},
-                'sil_anchor_bce': {'logits': proj_per_sil_anchor, 'labels': labs},
+                'sil_bce': {'projections': proj_per_sil, 'targets': labs},
+                'ske_bce': {'projections': proj_per_ske, 'targets': labs},
+                'sil_anchor_bce': {'projections': proj_per_sil_anchor, 'targets': labs},
                 'sil_triplet': {'embeddings': sil_embed, 'labels': labs},
                 'ske_triplet': {'embeddings': ske_embed, 'labels': labs},
                 'sil_softmax': {'logits': sil_logits, 'labels': labs},
