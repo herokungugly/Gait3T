@@ -447,19 +447,28 @@ class Gait3T_coords(BaseModel):
             proj_per_sil = sil_feat_transpose @ ske_feat_transpose.transpose(1, 2).contiguous()  # [embed_size, n, separate_fc_cnt] @ [embed_size, separate_fc_cnt, n]
             proj_per_ske = proj_per_sil.transpose(1, 2).contiguous()
             proj_per_sil_anchor = sil_feat_transpose @ sil_anchor_feat_transpose.transpose(1, 2).contiguous()
-            training_feat = {
-                'sil_supcl': {'projections': proj_per_sil, 'targets': labs},
-                'ske_supcl': {'projections': proj_per_ske, 'targets': labs},
-                'sil_anchor_supcl': {'projections': proj_per_sil_anchor, 'targets': labs},
-                'sil_triplet': {'embeddings': sil_embed, 'labels': labs},
-                'ske_supcon': {'features': ske_features, 'labels': labs},
-                'sil_softmax': {'logits': sil_logits, 'labels': labs},
-                # 'ske_softmax': {'logits': ske_logits, 'labels': labs}
+            retval = {
+                'training_feat': {
+                    'sil_supcl': {'projections': proj_per_sil, 'targets': labs},
+                    'ske_supcl': {'projections': proj_per_ske, 'targets': labs},
+                    'sil_anchor_supcl': {'projections': proj_per_sil_anchor, 'targets': labs},
+                    'sil_triplet': {'embeddings': sil_embed, 'labels': labs},
+                    'ske_supcon': {'features': ske_features, 'labels': labs},
+                    'sil_softmax': {'logits': sil_logits, 'labels': labs},
+                    # 'ske_softmax': {'logits': ske_logits, 'labels': labs}
+                },
+                'visual_summary': {
+                    'image/sils': ske_feat['visual_summary']['image/pose'],
+                },
+                'inference_feat': {
+                    'embeddings': ske_feat
+                }
             }
+            retval['visual_summary'].update(self.log_grad()) # adds grads to tensorboard
+            return retval
 
         retval = {
             'training_feat': {
-                training_feat
             },
             'visual_summary': {
                 'image/sils': ske_feat['visual_summary']['image/pose'],
