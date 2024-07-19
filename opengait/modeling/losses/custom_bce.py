@@ -21,7 +21,7 @@ class ClipBinaryCrossEntropyLoss(BaseLoss):
 
         dot_product_tempered = projections / self.temperature
         # exp_dot_tempered = (torch.exp(dot_product_tempered - torch.max(dot_product_tempered, dim=1, keepdim=True)[0]) + 1e-5)  # softmax for supconloss
-        sigmoid_dot_product = self.custom_sigmoid(dot_product)
+        sigmoid_dot_product = self.custom_sigmoid(dot_product_tempered)
   
         mask_similar_class = (targets.unsqueeze(1).repeat(1, targets.shape[0]) == targets).to(device)
         cardinality_per_samples = torch.sum(mask_similar_class, dim = 1)
