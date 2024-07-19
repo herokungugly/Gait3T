@@ -4,7 +4,7 @@ from .base import BaseLoss
 
 class ClipBinaryCrossEntropyLoss(BaseLoss):
     def __init__(self, temperature=0.07):
-        super(SupervisedContrastiveLoss, self).__init__()
+        super(ClipBinaryCrossEntropyLoss, self).__init__()
         self.temperature = temperature
 
     def custom_sigmoid(self, x):
