@@ -368,7 +368,7 @@ class Gait2T(BaseModel):
                 'image/sils': rearrange(pose * 255., 'n c s h w -> (n s) c h w'),
             },
             'inference_feat': {
-                'embeddings': ske_embed
+                'embeddings': torch.cat((sil_embed, ske_embed), 1)
             }
         }
         retval['visual_summary'].update(self.log_grad()) # adds grads to tensorboard

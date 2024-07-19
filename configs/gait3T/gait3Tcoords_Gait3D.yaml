@@ -1,7 +1,7 @@
 data_cfg:
   dataset_name: Gait3D
   dataset_root: /mnt/pami201/cxye/GAIT3D/coords_sils
-  dataset_partition: ./datasets/Gait3D/Gait3Dlite.json
+  dataset_partition: ./datasets/Gait3D/Gait3D.json
   num_workers: 1
   # cache: true
   data_in_use: [True, True]
@@ -12,7 +12,7 @@ evaluator_cfg:
   enable_distributed: true
   enable_float16: false
   restore_ckpt_strict: true
-  restore_hint: 60000
+  restore_hint: 30000
   save_name: gait3Tcoords
   eval_func: evaluate_Gait3D
   sampler:
@@ -21,8 +21,9 @@ evaluator_cfg:
     sample_type: all_ordered
     frames_all_limit: 720
     type: InferenceSampler
-  metric: euc
+  metric: cos
   transform:
+    - type: GaitGraphMultiInput
     - img_w: 64
       type: BaseSilCuttingTransform
 
@@ -83,8 +84,8 @@ trainer_cfg:
   log_iter: 100
   restore_ckpt_strict: true
   # frozen_restore_hint:  # TODO:
-  restore_hint: 0
-  save_iter: 10000
+  restore_hint: 40000
+  save_iter: 5000
   save_name: gait3Tcoords
   total_iter: 60000
   sampler:
