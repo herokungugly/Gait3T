@@ -3,7 +3,7 @@ import torch
 from .base import BaseLoss
 
 class ClipBinaryCrossEntropyLoss(BaseLoss):
-    def __init__(self, temperature=0.07, B=0.29):
+    def __init__(self, temperature=3, B=-1.49):
         super(ClipBinaryCrossEntropyLoss, self).__init__()
         self.B = B
         self.temperature = temperature
@@ -14,7 +14,7 @@ class ClipBinaryCrossEntropyLoss(BaseLoss):
         mask_similar_class = (targets.unsqueeze(1).repeat(1, targets.shape[0]) == targets).to(device)
 
         dot_product_tempered = projections / self.temperature - self.B
-        sigmoid_dot_product = torch.sigmoid(projections*mask_similar_class)
+        sigmoid_dot_product = torch.sigmoid(dot_product_tempered*mask_similar_class)
         
         # sigmoid_dot_product = torch.sigmoid(projections)
         cardinality_per_samples = torch.sum(mask_similar_class, dim = 1)
