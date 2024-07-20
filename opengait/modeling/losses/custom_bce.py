@@ -3,11 +3,10 @@ import torch
 from .base import BaseLoss
 
 class ClipBinaryCrossEntropyLoss(BaseLoss):
-    def __init__(self, temperature=0.07, eps=1e-5, B=0.29):
+    def __init__(self, temperature=0.07, B=0.29):
         super(ClipBinaryCrossEntropyLoss, self).__init__()
         self.B = B
         self.temperature = temperature
-        self.eps = eps
 
     def forward(self, projections, targets):
 
@@ -20,7 +19,7 @@ class ClipBinaryCrossEntropyLoss(BaseLoss):
         # sigmoid_dot_product = torch.sigmoid(projections)
         cardinality_per_samples = torch.sum(mask_similar_class, dim = 1)
 
-        log_prob = -torch.log(sigmoid_dot_product + self.eps)
+        log_prob = -torch.log(sigmoid_dot_product)
         # binary_crossentropy_loss_per_sample = torch.sum(log_prob * mask_similar_class, dim=1, keepdim=True) / cardinality_per_samples
         binary_crossentropy_loss_per_sample = torch.sum(log_prob, dim=1, keepdim=True) / cardinality_per_samples
         binary_crossentropy_loss = torch.mean(binary_crossentropy_loss_per_sample)
