@@ -506,7 +506,7 @@ class Gait3Tbce(BaseModel):
             },
             'inference_feat': {
                 # 'embeddings': sil_anchor_feat['triplet']['embeddings']
-                'embeddings': sil_embed
+                'embeddings': ske_embed
             }
         }
         retval['visual_summary'].update(self.log_grad()) # adds grads to tensorboard

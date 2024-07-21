@@ -12,12 +12,12 @@ evaluator_cfg:
   enable_distributed: true
   enable_float16: false
   restore_ckpt_strict: true
-  restore_hint: 60000
+  restore_hint: 40000
   save_name: gait3Tbce
   eval_func: evaluate_Gait3D
   sampler:
     batch_shuffle: false
-    batch_size: 8 #equal to gpus
+    batch_size: 4 #equal to gpus
     sample_type: all_ordered
     frames_all_limit: 720
     type: InferenceSampler
@@ -94,12 +94,12 @@ trainer_cfg:
   # frozen_restore_hint:  # TODO:
   restore_hint: 0
   save_iter: 5000
-  save_name: gait3Tbce
+  save_name: gait3Tbce-1.5B
   total_iter: 60000
   sampler:
     batch_shuffle: true
     batch_size:
-      - 8
+      - 32
       - 4
     frames_num_fixed: 30
     # fixed frames number for training
