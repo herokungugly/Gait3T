@@ -3,25 +3,31 @@ import torch
 from .base import BaseLoss
 
 class ClipBinaryCrossEntropyLoss(BaseLoss):
-    def __init__(self, temperature=1, beta=1.0):
+    def __init__(self, temperature=1, B=-1.5):
         super(ClipBinaryCrossEntropyLoss, self).__init__()
+        self.B = B
         self.temperature = temperature
-        self.beta = beta
 
     def forward(self, projections, targets):
-        # Compute similarity matrix
-        similarities = projections / self.temperature
+
+        device = torch.device("cuda") if projections.is_cuda else torch.device("cpu")
+        mask_similar_class = (targets.unsqueeze(1).repeat(1, targets.shape[0]) == targets).to(device)
+        mask_similar_class = mask_similar_class.int() * 2 - 1
+
+        dot_product_tempered = projections / self.temperature
+        sigmoid_dot_product = torch.sigmoid(dot_product_tempered*mask_similar_class-self.B)
+        # sigmoid_dot_product = torch.sigmoid(dot_product_tempered)
         
-        # Create mask for positive and negative pairs
-        mask_similar_class = (targets.unsqueeze(1).repeat(1, targets.shape[0]) == targets).float()
-        mask_dissimilar_class = 1 - mask_similar_class
-        m_ij = mask_similar_class - mask_dissimilar_class
-        
-        # Compute the loss
-        loss_matrix = torch.log(1 + torch.exp(m_ij * (-similarities + self.beta)))
-        loss = loss_matrix.sum() / targets.shape[0]
+        cardinality_per_samples = torch.sum(mask_similar_class, dim = 1)
+
+        log_prob = torch.log(sigmoid_dot_product)
+        # binary_crossentropy_loss_per_sample = torch.sum(log_prob * mask_similar_class, dim=1, keepdim=True) / cardinality_per_samples
+        binary_crossentropy_loss_per_sample = torch.sum(log_prob, dim=1, keepdim=True) / cardinality_per_samples
+        binary_crossentropy_loss = torch.mean(binary_crossentropy_loss_per_sample)
+
+
         self.info.update({
-            'clip_bce_loss': loss
+            'clip_bce_loss': binary_crossentropy_loss
         })
 
-        return loss, self.info
+        return binary_crossentropy_loss, self.info
