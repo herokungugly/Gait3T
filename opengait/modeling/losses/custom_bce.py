@@ -3,7 +3,7 @@ import torch
 from .base import BaseLoss
 
 class ClipBinaryCrossEntropyLoss(BaseLoss):
-    def __init__(self, temperature=0.07, beta=1.0):
+    def __init__(self, temperature=1, beta=1.0):
         super(ClipBinaryCrossEntropyLoss, self).__init__()
         self.temperature = temperature
         self.beta = beta
