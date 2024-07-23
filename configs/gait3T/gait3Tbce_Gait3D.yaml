@@ -76,12 +76,12 @@ scheduler_cfg:
 #   alpha: 0.1 # test on gaitdiff
 #   # warm_up_iteration: 2000
 #   # warm_up_step: 200
-  gamma: 0.1
+  gamma: 1
   milestones:
     - 20000
     - 40000
     - 50000
-  # scheduler: LambdaLR
+  scheduler: LambdaLR
   scheduler: MultiStepLR
 
 trainer_cfg:
@@ -94,7 +94,7 @@ trainer_cfg:
   # frozen_restore_hint:  # TODO:
   restore_hint: 0
   save_iter: 5000
-  save_name: gait3Tbce-1.5B
+  save_name: gait3Tbce
   total_iter: 60000
   sampler:
     batch_shuffle: true
