@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from utils import clones, is_list_or_tuple
 from torchvision.ops import RoIAlign
+import torch.utils.checkpoint as checkpoint
 
 
 class HorizontalPoolingPyramid():
@@ -758,6 +759,7 @@ class BasicBlock2D(nn.Module):
 
         return out
 
+
 class BasicBlockP3D(nn.Module):
     expansion = 1
 
@@ -813,7 +815,77 @@ class BasicBlockP3D(nn.Module):
         out = self.relu(out)
 
         return out
-    
+
+
+class BasicBlockP3Dcheckpoint(nn.Module):
+    expansion = 1
+
+    def __init__(self, inplanes, planes, stride=1,  downsample=None, groups=1,
+                 base_width=64, dilation=1, norm_layer=None):
+        super(BasicBlockP3D, self).__init__()
+        if norm_layer is None:
+            norm_layer2d = nn.BatchNorm2d
+            norm_layer3d = nn.BatchNorm3d
+        if groups != 1 or base_width != 64:
+            raise ValueError(
+                'BasicBlock only supports groups=1 and base_width=64')
+        if dilation > 1:
+            raise NotImplementedError(
+                "Dilation > 1 not supported in BasicBlock")
+        # Both self.conv1 and self.downsample layers downsample the input when stride != 1
+        self.relu  = nn.ReLU(inplace=True)
+        
+        self.conv1 = SetBlockWrapper(
+            nn.Sequential(
+                conv3x3(inplanes, planes, stride),
+            )
+        )
+
+        self.conv1_norm = SetBlockWrapper(
+            nn.Sequential(
+                norm_layer2d(planes), 
+                nn.ReLU(inplace=True)
+            )
+        )
+
+        self.conv2 = SetBlockWrapper(
+            nn.Sequential(
+                conv3x3(planes, planes),
+            )
+        )
+
+        self.conv2_norm = SetBlockWrapper(
+            nn.Sequential(
+                norm_layer2d(planes), 
+            )
+        )
+
+        self.shortcut3d = nn.Conv3d(planes, planes, (3, 1, 1), (1, 1, 1), (1, 0, 0), bias=False)
+        self.sbn        = norm_layer3d(planes)
+
+        self.downsample = downsample
+
+    def forward(self, x):
+        '''
+            x: [n, c, s, h, w]
+        '''
+        identity = x
+
+        out = checkpoint.checkpoint(self.conv1, x)
+        out = self.conv1_norm(out)
+        out = self.relu(out + self.sbn(checkpoint.checkpoint(self.shortcut3d, out)))
+        out = checkpoint.checkpoint(self.conv2, out)
+        out = self.conv2_norm(out)
+
+        if self.downsample is not None:
+            identity = self.downsample(x)
+
+        out += identity
+        out = self.relu(out)
+
+        return out
+
+
 class BasicBlock3D(nn.Module):
     expansion = 1
 
