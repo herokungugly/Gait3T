@@ -822,7 +822,7 @@ class BasicBlockP3Dcheckpoint(nn.Module):
 
     def __init__(self, inplanes, planes, stride=1,  downsample=None, groups=1,
                  base_width=64, dilation=1, norm_layer=None):
-        super(BasicBlockP3D, self).__init__()
+        super(BasicBlockP3Dcheckpoint, self).__init__()
         if norm_layer is None:
             norm_layer2d = nn.BatchNorm2d
             norm_layer3d = nn.BatchNorm3d
