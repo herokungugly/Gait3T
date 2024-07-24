@@ -450,6 +450,9 @@ class Gait3Tbce(BaseModel):
                     if m.affine:
                         nn.init.normal_(m.weight.data, 1.0, 0.02)
                         nn.init.constant_(m.bias.data, 0.0)
+            else:
+                for param in m.parameters():
+                    param.requires_grad = False
          
     def inputs_pretreament(self, inputs):
        ### Ensure the same data augmentation for heatmap and silhouette
@@ -494,9 +497,10 @@ class Gait3Tbce(BaseModel):
         ske_embed = ske_feat['triplet']['embeddings']
         sil_feat_transpose = sil_embed.transpose(0, 1).contiguous()  # [embed_size, n, separate_fc_cnt]
         ske_feat_transpose = ske_embed.transpose(0, 1).contiguous()  # [embed_size, n, separate_fc_cnt]
-        with torch.no_grad():
-           sil_anchor_feat = self.frozen_tower(([sils], labs, typs, vies, seqL))['training_feat']
-           sil_anchor_feat_transpose = sil_anchor_feat['triplet']['embeddings'].transpose(0, 1).contiguous()
+        # with torch.no_grad():
+        sil_anchor_feat = self.frozen_tower(([sils], labs, typs, vies, seqL))['training_feat']
+        sil_anchor_feat_transpose = sil_anchor_feat['triplet']['embeddings'].transpose(0, 1).contiguous()
+        
         proj_per_sil = sil_feat_transpose @ ske_feat_transpose.transpose(1, 2).contiguous()  # [embed_size, n, separate_fc_cnt] @ [embed_size, separate_fc_cnt, n] = [embed_size, n, n]
         proj_per_ske = proj_per_sil.transpose(1, 2).contiguous()
         proj_per_sil_anchor = sil_feat_transpose @ sil_anchor_feat_transpose.transpose(1, 2).contiguous()
