@@ -131,10 +131,10 @@ class sils_DeepGaitV2(nn.Module):
         outs = self.TP(out4, seqL, options={"dim": 2})[0]  # [n, c, h, w]
 
         # Horizontal Pooling Matching, HPM
-        feat = checkpoint.checkpoint(self.HPP, outs)  # [n, c, p]
+        feat = self.HPP(outs)  # [n, c, p]
 
         embed_1 = checkpoint.checkpoint(self.FCs, feat)  # [n, c, p]
-        embed_2, logits = checkpoint.checkpoint(self.BNNecks, embed_1)  # [n, c, p]
+        embed_2, logits = self.BNNecks(embed_1)  # [n, c, p]
 
         if self.inference_use_emb2:
             embed = embed_2
@@ -261,7 +261,7 @@ class ske_DeepGaitV2(nn.Module):
         outs = self.TP(out4, seqL, options={"dim": 2})[0]  # [n, c, h, w]
 
         # Horizontal Pooling Matching, HPM
-        feat = checkpoint.checkpoint(self.HPP, outs)  # [n, c, p]
+        feat = self.HPP(outs)  # [n, c, p]
 
         embed_1 = checkpoint.checkpoint(self.FCs, feat)  # [n, c, p]
         embed_2, logits = checkpoint.checkpoint(self.BNNecks, embed_1)  # [n, c, p]
