@@ -874,7 +874,7 @@ class BasicBlockP3Dcheckpoint(nn.Module):
         out = checkpoint.checkpoint(self.conv1, x)
         out = self.conv1_norm(out)
         out = self.relu(out + self.sbn(checkpoint.checkpoint(self.shortcut3d, out)))
-        out = checkpoint.checkpoint(self.conv2, out)
+        out = self.conv2(out)
         out = self.conv2_norm(out)
 
         if self.downsample is not None:
