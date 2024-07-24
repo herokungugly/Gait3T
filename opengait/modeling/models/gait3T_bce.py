@@ -102,7 +102,7 @@ class sils_DeepGaitV2(nn.Module):
 
         layers = [block(self.inplanes, planes, stride=stride, downsample=downsample)]
         self.inplanes = planes * block.expansion
-        s = [1, 1] if mode in ['2d', 'p3d'] else [1, 1, 1]
+        s = [1, 1] if mode in ['2d', 'p3d', 'p3dck'] else [1, 1, 1]
         for i in range(1, blocks_num):
             layers.append(
                 block(self.inplanes, planes, stride=s)
@@ -232,7 +232,7 @@ class ske_DeepGaitV2(nn.Module):
 
         layers = [block(self.inplanes, planes, stride=stride, downsample=downsample)]
         self.inplanes = planes * block.expansion
-        s = [1, 1] if mode in ['2d', 'p3d'] else [1, 1, 1]
+        s = [1, 1] if mode in ['2d', 'p3d', 'p3dck'] else [1, 1, 1]
         for i in range(1, blocks_num):
             layers.append(
                 block(self.inplanes, planes, stride=s)
