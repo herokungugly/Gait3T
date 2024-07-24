@@ -499,6 +499,7 @@ class Gait3Tbce(BaseModel):
         proj_per_sil = sil_feat_transpose @ ske_feat_transpose.transpose(1, 2).contiguous()  # [embed_size, n, separate_fc_cnt] @ [embed_size, separate_fc_cnt, n] = [embed_size, n, n]
         proj_per_ske = proj_per_sil.transpose(1, 2).contiguous()
         proj_per_sil_anchor = sil_feat_transpose @ sil_anchor_feat_transpose.transpose(1, 2).contiguous()
+        del sil_feat_transpose, ske_feat_transpose, sil_anchor_feat_transpose
 
         retval = {
             'training_feat': {
