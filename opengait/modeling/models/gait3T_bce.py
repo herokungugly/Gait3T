@@ -25,7 +25,7 @@ class sils_DeepGaitV2(nn.Module):
 
     def __init__(self, save_name=""):
         super(sils_DeepGaitV2, self).__init__()
-        mode = "p3dck"
+        mode = "p3d"
         block = blocks_map[mode]
 
         in_channels = 1
@@ -161,7 +161,7 @@ class ske_DeepGaitV2(nn.Module):
 
     def __init__(self):
         super(ske_DeepGaitV2, self).__init__()
-        mode = "p3dck"
+        mode = "p3d"
         block = blocks_map[mode]
 
         in_channels = 2
@@ -222,10 +222,6 @@ class ske_DeepGaitV2(nn.Module):
                 downsample = nn.Sequential(
                     nn.Conv3d(self.inplanes, planes * block.expansion, kernel_size=(1, 1, 1), stride=(1, *stride),
                               padding=[0, 0, 0], bias=False), nn.BatchNorm3d(planes * block.expansion))
-            elif mode == 'p3dck':
-                downsample = nn.Sequential(
-                    nn.Conv3d(self.inplanes, planes * block.expansion, kernel_size=(1, 1, 1), stride=(1, *stride),
-                              padding=[0, 0, 0], bias=False), nn.BatchNorm3d(planes * block.expansion))
             else:
                 raise TypeError('xxx')
         else:
@@ -233,7 +229,7 @@ class ske_DeepGaitV2(nn.Module):
 
         layers = [block(self.inplanes, planes, stride=stride, downsample=downsample)]
         self.inplanes = planes * block.expansion
-        s = [1, 1] if mode in ['2d', 'p3d', 'p3dck'] else [1, 1, 1]
+        s = [1, 1] if mode in ['2d', 'p3d'] else [1, 1, 1]
         for i in range(1, blocks_num):
             layers.append(
                 block(self.inplanes, planes, stride=s)
@@ -285,7 +281,6 @@ class ske_DeepGaitV2(nn.Module):
         }
 
         return retval
-
 
 class sils_Frozen(nn.Module):
 
