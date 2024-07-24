@@ -5,7 +5,7 @@ import torch.nn as nn
 import numpy as np
 from ..base_model import BaseModel
 from ..modules import SetBlockWrapper, HorizontalPoolingPyramid, PackSequenceWrapper, SeparateFCs, SeparateBNNecks, \
-    conv1x1, conv3x3, BasicBlock2D, BasicBlockP3D, BasicBlock3D
+    conv1x1, conv3x3, BasicBlock2D, BasicBlockP3D, BasicBlockP3Dcheckpoint, BasicBlock3D
 from einops import rearrange
 # from .deepgaitv2 import DeepGaitV2
 import sys
@@ -15,6 +15,7 @@ from utils import config_loader
 blocks_map = {
     '2d': BasicBlock2D,
     'p3d': BasicBlockP3D,
+    'p3dck': BasicBlockP3Dcheckpoint,
     '3d': BasicBlock3D
 }
 
@@ -23,7 +24,7 @@ class sils_DeepGaitV2(nn.Module):
 
     def __init__(self, save_name=""):
         super(sils_DeepGaitV2, self).__init__()
-        mode = "p3d"
+        mode = "p3dck"
         block = blocks_map[mode]
 
         in_channels = 1
@@ -155,7 +156,7 @@ class ske_DeepGaitV2(nn.Module):
 
     def __init__(self):
         super(ske_DeepGaitV2, self).__init__()
-        mode = "p3d"
+        mode = "p3dck"
         block = blocks_map[mode]
 
         in_channels = 2
