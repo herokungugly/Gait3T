@@ -264,7 +264,7 @@ class ske_DeepGaitV2(nn.Module):
         feat = self.HPP(outs)  # [n, c, p]
 
         embed_1 = self.FCs(feat)  # [n, c, p]
-        embed_2, logits = checkpoint.checkpoint(self.BNNecks, embed_1)  # [n, c, p]
+        embed_2, logits = self.BNNecks(embed_1)  # [n, c, p]
 
         if self.inference_use_emb2:
             embed = embed_2
