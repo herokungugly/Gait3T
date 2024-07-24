@@ -11,6 +11,7 @@ from einops import rearrange
 import sys
 sys.path.append("...")
 from utils import config_loader
+import torch.utils.checkpoint as checkpoint
 
 blocks_map = {
     '2d': BasicBlock2D,
