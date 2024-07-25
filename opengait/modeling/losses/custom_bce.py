@@ -25,7 +25,7 @@ class ClipBinaryCrossEntropyLoss(BaseLoss):
         log_prob = torch.sum(log_prob, dim = 1)
         # print(log_prob.shape)
         # binary_crossentropy_loss_per_sample = torch.sum(log_prob * mask_similar_class, dim=1, keepdim=True) / cardinality_per_samples
-        binary_crossentropy_loss_per_sample = torch.sum(log_prob, dim=1, keepdim=True) / cardinality_per_samples
+        binary_crossentropy_loss_per_sample = torch.sum(log_prob, dim=1, keepdim=True) / (cardinality_per_samples*targets.shape[0])
         binary_crossentropy_loss = torch.mean(binary_crossentropy_loss_per_sample)
 
 
