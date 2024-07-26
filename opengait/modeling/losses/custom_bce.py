@@ -5,8 +5,8 @@ from .base import BaseLoss
 class ClipBinaryCrossEntropyLoss(BaseLoss):
     def __init__(self, temperature=1, B=0):
         super(ClipBinaryCrossEntropyLoss, self).__init__()
-        self.B = B
-        self.temperature = temperature
+        self.B = nn.Parameter(torch.ones(1))
+        self.temperature = nn.Parameter(torch.ones(1))
 
     def forward(self, projections, targets, B, temperature):
 
