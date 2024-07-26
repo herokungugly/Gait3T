@@ -428,6 +428,9 @@ class Gait3Tbce(BaseModel):
             nn.Linear(final_ch, final_ch)
         )
         self.map_pose = nn.Linear(final_ch, final_ch)
+        self.sil_B, self.sil_temp = nn.Parameter(torch.ones(1)), nn.Parameter(torch.ones(1))  # learnable loss hyper parameters
+        self.ske_B, self.ske_temp = nn.Parameter(torch.ones(1)), nn.Parameter(torch.ones(1))
+        self.anchor_B, self.anchor_temp = nn.Parameter(torch.ones(1)), nn.Parameter(torch.ones(1))
 
     def init_parameters(self):
         for name, m in self.named_modules():
@@ -509,9 +512,9 @@ class Gait3Tbce(BaseModel):
 
         retval = {
             'training_feat': {
-                'sil_bce': {'projections': proj_per_sil, 'targets': labs},
-                'ske_bce': {'projections': proj_per_ske, 'targets': labs},
-                'sil_anchor_bce': {'projections': proj_per_sil_anchor, 'targets': labs},
+                'sil_bce': {'projections': proj_per_sil, 'targets': labs, 'B': self.sil_B, 'temperature', self.sil_temp},
+                'ske_bce': {'projections': proj_per_ske, 'targets': labs, 'B': self.ske_B, 'temperature', self.ske_temp},
+                'sil_anchor_bce': {'projections': proj_per_sil_anchor, 'targets': labs, 'B': self.anchor_B, 'temperature', self.anchor_temp},
                 'sil_triplet': {'embeddings': sil_embed, 'labels': labs},
                 'ske_triplet': {'embeddings': ske_embed, 'labels': labs},
                 'sil_softmax': {'logits': sil_logits, 'labels': labs},
