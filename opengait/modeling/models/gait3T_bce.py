@@ -422,15 +422,9 @@ class Gait3Tbce(BaseModel):
         self.non_init_list = ["frozen_tower"]
 
         final_ch = model_cfg['ske_model']['out_dim']
-        self.map = nn.Sequential(
-            nn.Linear(256, 1),
-            nn.LeakyReLU(),
-            nn.Linear(final_ch, final_ch)
-        )
-        self.map_pose = nn.Linear(final_ch, final_ch)
-        self.sil_B, self.sil_temp = nn.Parameter(torch.ones(1)), nn.Parameter(torch.ones(1))  # learnable loss hyper parameters
-        self.ske_B, self.ske_temp = nn.Parameter(torch.ones(1)), nn.Parameter(torch.ones(1))
-        self.anchor_B, self.anchor_temp = nn.Parameter(torch.ones(1)), nn.Parameter(torch.ones(1))
+        # self.sil_B, self.sil_temp = nn.Parameter(torch.ones(1)), nn.Parameter(torch.ones(1))  # learnable loss hyper parameters
+        # self.ske_B, self.ske_temp = nn.Parameter(torch.ones(1)), nn.Parameter(torch.ones(1))
+        # self.anchor_B, self.anchor_temp = nn.Parameter(torch.ones(1)), nn.Parameter(torch.ones(1))
 
     def init_parameters(self):
         for name, m in self.named_modules():
@@ -494,8 +488,8 @@ class Gait3Tbce(BaseModel):
         sil_embed = sil_feat['triplet']['embeddings']
         ske_embed = ske_feat['triplet']['embeddings']
 
-        print(sil_embed.mean().norm())
-        print(ske_embed.mean().norm())
+        # print(sil_embed.mean().norm())
+        #  print(ske_embed.mean().norm())
         sil_feat_transpose = sil_embed.transpose(0, 1).contiguous()  # [embed_size, n, separate_fc_cnt]
         ske_feat_transpose = ske_embed.transpose(0, 1).contiguous()  # [embed_size, n, separate_fc_cnt]
         with torch.no_grad():
@@ -512,9 +506,9 @@ class Gait3Tbce(BaseModel):
 
         retval = {
             'training_feat': {
-                'sil_bce': {'projections': proj_per_sil, 'targets': labs, 'B': self.sil_B, 'temperature', self.sil_temp},
-                'ske_bce': {'projections': proj_per_ske, 'targets': labs, 'B': self.ske_B, 'temperature', self.ske_temp},
-                'sil_anchor_bce': {'projections': proj_per_sil_anchor, 'targets': labs, 'B': self.anchor_B, 'temperature', self.anchor_temp},
+                'sil_bce': {'projections': proj_per_sil, 'targets': labs},
+                'ske_bce': {'projections': proj_per_ske, 'targets': labs},
+                'sil_anchor_bce': {'projections': proj_per_sil_anchor, 'targets': labs},
                 'sil_triplet': {'embeddings': sil_embed, 'labels': labs},
                 'ske_triplet': {'embeddings': ske_embed, 'labels': labs},
                 'sil_softmax': {'logits': sil_logits, 'labels': labs},
@@ -525,7 +519,7 @@ class Gait3Tbce(BaseModel):
             },
             'inference_feat': {
                 # 'embeddings': sil_anchor_feat['triplet']['embeddings']
-                'embeddings': ske_embed
+                'embeddings': sil_embed
             }
         }
         retval['visual_summary'].update(self.log_grad()) # adds grads to tensorboard

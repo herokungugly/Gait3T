@@ -11,8 +11,8 @@ data_cfg:
 evaluator_cfg:
   enable_distributed: true
   enable_float16: false
-  restore_ckpt_strict: true
-  restore_hint: 40000
+  restore_ckpt_strict: false
+  restore_hint: 60000
   save_name: gait3Tbce
   eval_func: evaluate_Gait3D
   sampler:
@@ -86,10 +86,10 @@ scheduler_cfg:
 
 trainer_cfg:
   enable_float16: true
-  find_unused_parameters: true
+  find_unused_parameters: false
   with_test: false
   log_iter: 100
-  restore_ckpt_strict: true
+  restore_ckpt_strict: false
   scheduler_reset: false
   # frozen_restore_hint:  # TODO:
   restore_hint: 0

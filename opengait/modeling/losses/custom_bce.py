@@ -1,21 +1,21 @@
 
 import torch
-from torch import torch.nn
+import torch.nn as nn
 from .base import BaseLoss
 
 class ClipBinaryCrossEntropyLoss(BaseLoss):
     def __init__(self, temperature=1, B=0):
         super(ClipBinaryCrossEntropyLoss, self).__init__()
-        # self.B = nn.Parameter(torch.ones(1))
-        # self.temperature = nn.Parameter(torch.ones(1))
+        self.B = nn.Parameter(torch.ones(1))
+        self.temperature = nn.Parameter(torch.ones(1))
 
-    def forward(self, projections, targets, B, temperature):
+    def forward(self, projections, targets):
 
         device = torch.device("cuda") if projections.is_cuda else torch.device("cpu")
         mask_similar_class_bool = (targets.unsqueeze(1).repeat(1, targets.shape[0]) == targets).to(device)
         mask_similar_class = mask_similar_class_bool.int() * 2 - 1
         
-        dot_product_tempered = projections / temperature - B
+        dot_product_tempered = projections / self.temperature - self.B
         sigmoid_dot_product = torch.sigmoid(dot_product_tempered*mask_similar_class)
         
         cardinality_per_samples = torch.sum(mask_similar_class_bool, dim = 1)
@@ -27,7 +27,9 @@ class ClipBinaryCrossEntropyLoss(BaseLoss):
 
 
         self.info.update({
-            'clip_bce_loss': binary_crossentropy_loss
+            'clip_bce_loss': binary_crossentropy_loss,
+            'B': self.B,
+            'temp': self.temperature
         })
 
         return binary_crossentropy_loss, self.info
