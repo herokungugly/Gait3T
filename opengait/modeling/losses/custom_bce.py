@@ -17,12 +17,10 @@ class ClipBinaryCrossEntropyLoss(BaseLoss):
         
         dot_product_tempered = projections / self.temperature - self.B
         sigmoid_dot_product = torch.sigmoid(dot_product_tempered*mask_similar_class)
-        
-        cardinality_per_samples = torch.sum(mask_similar_class_bool, dim = 1)
 
         log_prob = -torch.log(sigmoid_dot_product)
         log_prob = torch.sum(log_prob, dim = 1)
-        binary_crossentropy_loss_per_sample = torch.sum(log_prob, dim=1, keepdim=True) / (cardinality_per_samples*targets.shape[0])
+        binary_crossentropy_loss_per_sample = torch.sum(log_prob, dim=1, keepdim=True) / targets.shape[0]
         binary_crossentropy_loss = torch.mean(binary_crossentropy_loss_per_sample)
 
 
