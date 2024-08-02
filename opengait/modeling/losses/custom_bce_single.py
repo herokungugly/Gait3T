@@ -20,7 +20,7 @@ class ClipBinaryCrossEntropyLoss(BaseLoss):
 
         log_prob = -torch.log(sigmoid_dot_product)
         log_prob = torch.sum(log_prob, dim = 1)
-        binary_crossentropy_loss_per_sample = torch.sum(log_prob, dim=1, keepdim=True) / targets.shape[0]
+        binary_crossentropy_loss_per_sample = torch.sum(log_prob, dim=1, keepdim=True) / targets.shape[0]  # does not consider the masked same id samples
         binary_crossentropy_loss = torch.mean(binary_crossentropy_loss_per_sample)
 
 
