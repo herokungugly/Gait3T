@@ -17,7 +17,7 @@ evaluator_cfg:
   eval_func: evaluate_Gait3D
   sampler:
     batch_shuffle: false
-    batch_size: 8 #equal to gpus
+    batch_size: 4 #equal to gpus
     sample_type: all_ordered
     frames_all_limit: 720
     type: InferenceSampler

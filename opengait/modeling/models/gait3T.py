@@ -487,6 +487,7 @@ class Gait3T(BaseModel):
         with torch.no_grad():
            sil_anchor_feat = self.frozen_tower(([sils], labs, typs, vies, seqL))['training_feat']
            sil_anchor_feat_transpose = sil_anchor_feat['triplet']['embeddings'].transpose(0, 1).contiguous()
+           anchor_embed = sil_anchor_feat['triplet']['embeddings']
         proj_per_sil = sil_feat_transpose @ ske_feat_transpose.transpose(1, 2).contiguous()  # [embed_size, n, separate_fc_cnt] @ [embed_size, separate_fc_cnt, n] = [embed_size, n, n]
         proj_per_ske = proj_per_sil.transpose(1, 2).contiguous()
         proj_per_sil_anchor = sil_feat_transpose @ sil_anchor_feat_transpose.transpose(1, 2).contiguous()
@@ -505,8 +506,8 @@ class Gait3T(BaseModel):
                 'image/sils': rearrange(pose * 255., 'n c s h w -> (n s) c h w')
             },
             'inference_feat': {
-                # 'embeddings': sil_anchor_feat['triplet']['embeddings']
-                'embeddings': sil_embed
+                'embeddings': torch.cat((ske_embed, anchor_embed), dim=1)
+                # 'embeddings': anchor_embed
             }
         }
         retval['visual_summary'].update(self.log_grad()) # adds grads to tensorboard
