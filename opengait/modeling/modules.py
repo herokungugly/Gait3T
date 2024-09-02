@@ -919,8 +919,11 @@ class BasicBlockP3Dcheckpoint(nn.Module):
         out = self.conv2_norm(out)
 
         if self.downsample is not None:
-            identity = checkpoint.checkpoint(self.downsample[0], x)
-            identity = self.downsample[1](identity)
+            for layer in identity:
+                    if isinstance(layer, nn.Conv3d):
+                    identity = checkpoint.checkpoint(layer, identity)
+                else:
+                    identity = layer(identity)
 
         out += identity
         out = self.relu(out)
