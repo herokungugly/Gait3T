@@ -5,7 +5,7 @@ import torch.nn as nn
 import numpy as np
 from ..base_model import BaseModel
 from ..modules import SetBlockWrapper, HorizontalPoolingPyramid, PackSequenceWrapper, SeparateFCs, SeparateBNNecks, \
-    conv1x1, conv3x3, BasicBlock2D, BasicBlockP3D, BasicBlockP3Dcheckpoint, BasicBlock3D
+    conv1x1, conv3x3, BasicBlock2D, BasicBlock2Dcheckpoint, BasicBlockP3D, BasicBlockP3Dcheckpoint, BasicBlock3D
 from einops import rearrange
 # from .deepgaitv2 import DeepGaitV2
 import sys
@@ -56,7 +56,7 @@ class sils_DeepGaitV2(nn.Module):
             nn.ReLU(inplace=True)
         ))
         self.layer1 = SetBlockWrapper(
-            self.make_layer(BasicBlock2D, channels[0], strides[0], blocks_num=layers[0], mode=mode))
+            self.make_layer(BasicBlock2Dcheckpoint, channels[0], strides[0], blocks_num=layers[0], mode=mode))
 
         self.layer2 = self.make_layer(block, channels[1], strides[1], blocks_num=layers[1], mode=mode)
         self.layer3 = self.make_layer(block, channels[2], strides[2], blocks_num=layers[2], mode=mode)
@@ -93,9 +93,7 @@ class sils_DeepGaitV2(nn.Module):
                     nn.Conv3d(self.inplanes, planes * block.expansion, kernel_size=(1, 1, 1), stride=(1, *stride),
                               padding=[0, 0, 0], bias=False), nn.BatchNorm3d(planes * block.expansion))
             elif mode == 'p3dck':
-                downsample = nn.Sequential(
-                    nn.Conv3d(self.inplanes, planes * block.expansion, kernel_size=(1, 1, 1), stride=(1, *stride),
-                              padding=[0, 0, 0], bias=False), nn.BatchNorm3d(planes * block.expansion))
+                downsample = nn.Conv3d(self.inplanes, planes * block.expansion, kernel_size=(1, 1, 1), stride=(1, *stride), padding=[0, 0, 0], bias=False), nn.BatchNorm3d(planes * block.expansion))
             else:
                 raise TypeError('xxx')
         else:
@@ -191,7 +189,7 @@ class ske_DeepGaitV2(nn.Module):
             nn.ReLU(inplace=True)
         ))
         self.layer1 = SetBlockWrapper(
-            self.make_layer(BasicBlock2D, channels[0], strides[0], blocks_num=layers[0], mode=mode))
+            self.make_layer(BasicBlock2Dcheckpoint, channels[0], strides[0], blocks_num=layers[0], mode=mode))
 
         self.layer2 = self.make_layer(block, channels[1], strides[1], blocks_num=layers[1], mode=mode)
         self.layer3 = self.make_layer(block, channels[2], strides[2], blocks_num=layers[2], mode=mode)
@@ -223,9 +221,7 @@ class ske_DeepGaitV2(nn.Module):
                     nn.Conv3d(self.inplanes, planes * block.expansion, kernel_size=(1, 1, 1), stride=(1, *stride),
                               padding=[0, 0, 0], bias=False), nn.BatchNorm3d(planes * block.expansion))
             elif mode == 'p3dck':
-                downsample = nn.Sequential(
-                    nn.Conv3d(self.inplanes, planes * block.expansion, kernel_size=(1, 1, 1), stride=(1, *stride),
-                              padding=[0, 0, 0], bias=False), nn.BatchNorm3d(planes * block.expansion))
+                downsample = nn.Conv3d(self.inplanes, planes * block.expansion, kernel_size=(1, 1, 1), stride=(1, *stride), padding=[0, 0, 0], bias=False), nn.BatchNorm3d(planes * block.expansion))
             else:
                 raise TypeError('xxx')
         else:
