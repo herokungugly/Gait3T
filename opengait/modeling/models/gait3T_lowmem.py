@@ -93,7 +93,9 @@ class sils_DeepGaitV2(nn.Module):
                     nn.Conv3d(self.inplanes, planes * block.expansion, kernel_size=(1, 1, 1), stride=(1, *stride),
                               padding=[0, 0, 0], bias=False), nn.BatchNorm3d(planes * block.expansion))
             elif mode == 'p3dck':
-                downsample = nn.Conv3d(self.inplanes, planes * block.expansion, kernel_size=(1, 1, 1), stride=(1, *stride), padding=[0, 0, 0], bias=False), nn.BatchNorm3d(planes * block.expansion)
+                downsample = nn.Sequential(
+                    nn.Conv3d(self.inplanes, planes * block.expansion, kernel_size=(1, 1, 1), stride=(1, *stride),
+                              padding=[0, 0, 0], bias=False), nn.BatchNorm3d(planes * block.expansion))
             else:
                 raise TypeError('xxx')
         else:
@@ -221,7 +223,9 @@ class ske_DeepGaitV2(nn.Module):
                     nn.Conv3d(self.inplanes, planes * block.expansion, kernel_size=(1, 1, 1), stride=(1, *stride),
                               padding=[0, 0, 0], bias=False), nn.BatchNorm3d(planes * block.expansion))
             elif mode == 'p3dck':
-                downsample = nn.Conv3d(self.inplanes, planes * block.expansion, kernel_size=(1, 1, 1), stride=(1, *stride), padding=[0, 0, 0], bias=False), nn.BatchNorm3d(planes * block.expansion)
+                downsample = nn.Sequential(
+                    nn.Conv3d(self.inplanes, planes * block.expansion, kernel_size=(1, 1, 1), stride=(1, *stride),
+                              padding=[0, 0, 0], bias=False), nn.BatchNorm3d(planes * block.expansion))
             else:
                 raise TypeError('xxx')
         else:
