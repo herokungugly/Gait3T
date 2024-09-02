@@ -4,10 +4,16 @@ import torch.nn as nn
 from .base import BaseLoss
 
 class ClipBinaryCrossEntropyLoss(BaseLoss):
-    def __init__(self, temperature=1, B=0):
+    def __init__(self, temperature=None, B=None):
         super(ClipBinaryCrossEntropyLoss, self).__init__()
-        self.B = nn.Parameter(torch.ones(1))
-        self.temperature = nn.Parameter(torch.ones(1))
+        if temperature is None:
+            self.temperature = nn.Parameter(torch.ones(1))
+        else:
+            self.temperature = temperature
+        if B is None:
+            self.B = nn.Parameter(torch.ones(1))
+        else:
+            self.B = B
 
     def forward(self, projections, targets):
 
