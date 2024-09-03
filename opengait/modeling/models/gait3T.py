@@ -417,12 +417,6 @@ class Gait3T(BaseModel):
         self.non_init_list = ["sil_model", "frozen_tower"]
 
         final_ch = model_cfg['ske_model']['out_dim']
-        self.map = nn.Sequential(
-            nn.Linear(256, 1),
-            nn.LeakyReLU(),
-            nn.Linear(final_ch, final_ch)
-        )
-        self.map_pose = nn.Linear(final_ch, final_ch)
 
     def init_parameters(self):
         for name, m in self.named_modules():
