@@ -520,7 +520,7 @@ class Gait3Tbce(BaseModel):
             },
             'inference_feat': {
                 # 'embeddings': ske_embed
-                'embeddings': torch.cat((ske_embed, anchor_embed), dim=1)
+                'embeddings': torch.cat((ske_embed, sil_embed), dim=1)
             }
         }
         retval['visual_summary'].update(self.log_grad()) # adds grads to tensorboard
