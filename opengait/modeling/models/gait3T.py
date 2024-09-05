@@ -415,6 +415,7 @@ class Gait3T(BaseModel):
         self.ske_model = ske_DeepGaitV2()
         self.frozen_tower = sils_Frozen("output/Gait3D/DeepGaitV2/DeepGaitV2/checkpoints/DeepGaitV2-60000.pt")
         self.non_init_list = ["sil_model", "frozen_tower"]
+        self.features_conv = self.sil_model.features[:-1]
 
         final_ch = model_cfg['ske_model']['out_dim']
 
@@ -459,6 +460,16 @@ class Gait3T(BaseModel):
                     grad = param.grad
                     grad_dict[f'histogram/{name}.grad'] = grad.detach().cpu().numpy().astype(float)
         return grad_dict
+
+    def activations_hook(self, grad):
+        self.gradients = grad
+
+    def get_activations_gradient(self):
+        return self.gradients
+    
+    # method for the activation exctraction
+    def get_activations(self, x):
+        return self.features_conv(x)
 
     def forward(self, inputs):
         ipts, labs, typs, vies, seqL = inputs
