@@ -385,6 +385,19 @@ class BaseModel(MetaModel, nn.Module):
             with autocast(enabled=self.engine_cfg['enable_float16']):
                 retval = self.forward(ipts)
                 inference_feat = retval['inference_feat']
+                inference_feat[:, 386].backward()
+                gradients = self.get_activations_gradient()
+
+                # pool the gradients across the channels
+                pooled_gradients = torch.mean(gradients, dim=[0, 2, 3])
+
+                # get the activations of the last convolutional layer
+                activations = self.get_activations(img).detach()
+
+                # weight the channels by corresponding gradients
+                for i in range(256):
+                    activations[:, i, :, :] *= pooled_gradients[i]
+                break
                 for k, v in inference_feat.items():
                     inference_feat[k] = ddp_all_gather(v, requires_grad=False)
                 del retval
