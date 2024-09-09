@@ -415,11 +415,13 @@ class sils_Frozen(nn.Module):
 class Gait3Tbce(BaseModel):
 
     def build_network(self, model_cfg):
-        self.sil_model = sils_DeepGaitV2()
-        # self.sil_model = sils_DeepGaitV2("output/Gait3D/DeepGaitV2/DeepGaitV2/checkpoints/DeepGaitV2-60000.pt")
-        self.ske_model = ske_DeepGaitV2()
+        # self.sil_model = sils_DeepGaitV2()
+        # self.ske_model = ske_DeepGaitV2()
+        self.sil_model = sils_DeepGaitV2("output/Gait3D/DeepGaitV2/DeepGaitV2/checkpoints/DeepGaitV2-60000.pt")
+        self.ske_model = ske_DeepGaitV2("output/Gait3D/DeepGaitV2/SkeletonGait/checkpoints/SkeletonGait-60000.pt")
         self.frozen_tower = sils_Frozen("output/Gait3D/DeepGaitV2/DeepGaitV2/checkpoints/DeepGaitV2-60000.pt")
         self.non_init_list = ["sil_model", "ske_model", "frozen_tower"]
+        self.no_grad_list = ["frozen_tower"]
 
         final_ch = model_cfg['ske_model']['out_dim']
         # self.sil_B, self.sil_temp = nn.Parameter(torch.ones(1)), nn.Parameter(torch.ones(1))  # learnable loss hyper parameters
@@ -442,9 +444,9 @@ class Gait3Tbce(BaseModel):
                     if m.affine:
                         nn.init.normal_(m.weight.data, 1.0, 0.02)
                         nn.init.constant_(m.bias.data, 0.0)
-            # else:
-                # for param in m.parameters():
-                    # param.requires_grad = False
+            if tower_name[0] not in self.no_grad_list:
+                for param in m.parameters():
+                    param.requires_grad = False
          
     def inputs_pretreament(self, inputs):
        ### Ensure the same data augmentation for heatmap and silhouette
