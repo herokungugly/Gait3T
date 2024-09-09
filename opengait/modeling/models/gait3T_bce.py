@@ -159,7 +159,7 @@ class sils_DeepGaitV2(nn.Module):
 
 class ske_DeepGaitV2(nn.Module):
 
-    def __init__(self):
+    def __init__(self, save_name=""):
         super(ske_DeepGaitV2, self).__init__()
         mode = "p3d"
         block = blocks_map[mode]
@@ -207,6 +207,11 @@ class ske_DeepGaitV2(nn.Module):
 
         self.TP = PackSequenceWrapper(torch.max)
         self.HPP = HorizontalPoolingPyramid(bin_num=[16])
+        
+        if save_name:
+            checkpoint = torch.load(save_name, map_location=torch.device("cuda", self.device))
+            model_state_dict = checkpoint['model']
+            self.load_state_dict(model_state_dict)
 
     def make_layer(self, block, planes, stride, blocks_num, mode='2d'):
 
