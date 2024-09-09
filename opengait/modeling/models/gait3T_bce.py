@@ -450,7 +450,7 @@ class Gait3Tbce(BaseModel):
                     if m.affine:
                         nn.init.normal_(m.weight.data, 1.0, 0.02)
                         nn.init.constant_(m.bias.data, 0.0)
-            if tower_name[0] not in self.no_grad_list:
+            if tower_name[0] in self.no_grad_list:
                 for param in m.parameters():
                     param.requires_grad = False
          
