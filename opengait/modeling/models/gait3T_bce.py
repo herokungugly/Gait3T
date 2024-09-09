@@ -419,7 +419,7 @@ class Gait3Tbce(BaseModel):
         # self.sil_model = sils_DeepGaitV2("output/Gait3D/DeepGaitV2/DeepGaitV2/checkpoints/DeepGaitV2-60000.pt")
         self.ske_model = ske_DeepGaitV2()
         self.frozen_tower = sils_Frozen("output/Gait3D/DeepGaitV2/DeepGaitV2/checkpoints/DeepGaitV2-60000.pt")
-        self.non_init_list = ["frozen_tower"]
+        self.non_init_list = ["sil_model", "ske_model", "frozen_tower"]
 
         final_ch = model_cfg['ske_model']['out_dim']
         # self.sil_B, self.sil_temp = nn.Parameter(torch.ones(1)), nn.Parameter(torch.ones(1))  # learnable loss hyper parameters
