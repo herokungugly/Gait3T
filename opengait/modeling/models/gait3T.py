@@ -410,9 +410,9 @@ class sils_Frozen(nn.Module):
 class Gait3T(BaseModel):
 
     def build_network(self, model_cfg):
-        self.sil_model = sils_DeepGaitV2()
-        # self.sil_model = sils_DeepGaitV2("output/Gait3D/DeepGaitV2/DeepGaitV2/checkpoints/DeepGaitV2-60000.pt")
-        self.ske_model = ske_DeepGaitV2()
+        # self.sil_model = sils_DeepGaitV2()
+        self.sil_model = sils_DeepGaitV2("output/Gait3D/DeepGaitV2/DeepGaitV2/checkpoints/DeepGaitV2-60000.pt")
+        self.ske_model = ske_DeepGaitV2("output/Gait3D/DeepGaitV2/SkeletonGait/checkpoints/SkeletonGait-60000.pt")
         self.frozen_tower = sils_Frozen("output/Gait3D/DeepGaitV2/DeepGaitV2/checkpoints/DeepGaitV2-60000.pt")
         self.non_init_list = ["sil_model", "frozen_tower"]
 
