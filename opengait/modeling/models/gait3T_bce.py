@@ -168,6 +168,7 @@ class ske_DeepGaitV2(nn.Module):
         layers = [1, 4, 4, 1]
         channels = [64, 128, 256, 512]
         self.inference_use_emb2 = False
+        self.device = torch.distributed.get_rank()
 
         if mode == '3d':
             strides = [
