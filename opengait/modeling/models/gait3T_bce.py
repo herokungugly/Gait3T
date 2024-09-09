@@ -442,9 +442,9 @@ class Gait3Tbce(BaseModel):
                     if m.affine:
                         nn.init.normal_(m.weight.data, 1.0, 0.02)
                         nn.init.constant_(m.bias.data, 0.0)
-            else:
-                for param in m.parameters():
-                    param.requires_grad = False
+            # else:
+                # for param in m.parameters():
+                    # param.requires_grad = False
          
     def inputs_pretreament(self, inputs):
        ### Ensure the same data augmentation for heatmap and silhouette
