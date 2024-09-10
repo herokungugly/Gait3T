@@ -28,44 +28,14 @@ evaluator_cfg:
 
 
 loss_cfg:
-  - loss_term_weight: 0.5
-    scale: 1
-    type: ClipBinaryCrossEntropyLoss
-    log_prefix: sil_bce
-    log_accuracy: true
-    temperature: 0.13
-    B: 1.3
-  - loss_term_weight: 0.5
-    scale: 1
-    type: ClipBinaryCrossEntropyLoss
-    log_prefix: ske_bce
-    log_accuracy: true
-    temperature: 0.13
-    B: 1.3
   - loss_term_weight: 1.0
-    scale: 1
-    type: ClipBinaryCrossEntropyLoss
-    log_prefix: sil_anchor_bce
-    log_accuracy: true
-    temperature: 0.18
-    B: 1.5
-  - loss_term_weights: 1.0
     margin: 0.2
     type: TripletLoss
-    log_prefix: sil_triplet
-  - loss_term_weights: 1.0
-    margin: 0.2
-    type: TripletLoss
-    log_prefix: ske_triplet
+    log_prefix: triplet
   - loss_term_weight: 1.0
     scale: 16
     type: CrossEntropyLoss
-    log_prefix: sil_softmax
-    log_accuracy: true
-  - loss_term_weight: 1.0
-    scale: 16
-    type: CrossEntropyLoss
-    log_prefix: ske_softmax
+    log_prefix: softmax
     log_accuracy: true
 
 model_cfg:

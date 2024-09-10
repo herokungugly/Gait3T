@@ -274,6 +274,7 @@ class Gait3Tpp(BaseModel):
         self.sil_model = sils_DeepGaitV2()
         self.ske_model = ske_DeepGaitV2()
         self.non_init_list = ["sil_model", "ske_model"]
+        self.no_grad_list = ["sil_model", "ske_model"]
       
         self.FCs = SeparateFCs(16, 512, 256*2)
         self.BNNecks = SeparateBNNecks(16, 256*2, class_num=3000)
@@ -303,6 +304,9 @@ class Gait3Tpp(BaseModel):
                     if m.affine:
                         nn.init.normal_(m.weight.data, 1.0, 0.02)
                         nn.init.constant_(m.bias.data, 0.0)
+            if tower_name[0] in self.no_grad_list:
+                for param in m.parameters():
+                    param.requires_grad = False
          
     def inputs_pretreament(self, inputs):
        ### Ensure the same data augmentation for heatmap and silhouette
