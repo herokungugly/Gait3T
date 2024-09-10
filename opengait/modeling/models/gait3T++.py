@@ -134,7 +134,6 @@ class sils_DeepGaitV2(nn.Module):
         retval = {
             'training_feat': {
                 'triplet': {'embeddings': embed_1, 'labels': labs},
-                'softmax': {'logits': logits, 'labels': labs}
             },
             'visual_summary': {
                 'image/sils': rearrange(sils, 'n c s h w -> (n s) c h w'),
@@ -256,7 +255,6 @@ class ske_DeepGaitV2(nn.Module):
         retval = {
             'training_feat': {
                 'triplet': {'embeddings': embed_1, 'labels': labs},
-                'softmax': {'logits': logits, 'labels': labs}
             },
             'visual_summary': {
                 'image/sils': rearrange(sils, 'n c s h w -> (n s) c h w'),
