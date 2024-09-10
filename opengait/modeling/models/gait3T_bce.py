@@ -476,8 +476,8 @@ class Gait3Tbce(BaseModel):
         valid_arg = get_valid_args(optimizer, optimizer_cfg, ['solver'])
         optimizer = optimizer(
             filter(lambda p: p.requires_grad, self.parameters()), **valid_arg)
-        for parameters in optimizer.parameters():
-            print(parameters[‘lr’])
+        for param_group in optimizer.param_groups:
+            print(param_group['lr'])
         return optimizer
     
     def log_grad(self):
