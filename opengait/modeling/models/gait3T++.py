@@ -285,7 +285,7 @@ class Gait3T++(BaseModel):
         if save_name:
             checkpoint = torch.load(save_name, map_location=torch.device("cuda", self.device))
             model_state_dict = checkpoint['model']
-            self.load_state_dict(model_state_dict)
+            self.load_state_dict(model_state_dict, strict=False)
 
     def init_parameters(self):
         for name, m in self.named_modules():
