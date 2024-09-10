@@ -278,6 +278,7 @@ class Gait3Tpp(BaseModel):
         self.FCs = SeparateFCs(16, 512, 256*2)
         self.BNNecks = SeparateBNNecks(16, 256*2, class_num=3000)
         self.device = torch.distributed.get_rank()
+        self.inference_use_emb2 = False
 
         final_ch = model_cfg['ske_model']['out_dim']
         save_name = "output/Gait3D/Gait3Tbce/gait3Tbce/checkpoints/gait3Tbce-60000.pt"
