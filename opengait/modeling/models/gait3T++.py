@@ -281,6 +281,11 @@ class Gait3T++(BaseModel):
         self.BNNecks = SeparateBNNecks(16, 256*2, class_num=3000)
 
         final_ch = model_cfg['ske_model']['out_dim']
+        save_name = "output/Gait3D/Gait3Tbce/gait3Tbce/checkpoints/gait3Tbce-60000.pt"
+        if save_name:
+            checkpoint = torch.load(save_name, map_location=torch.device("cuda", self.device))
+            model_state_dict = checkpoint['model']
+            self.load_state_dict(model_state_dict)
 
     def init_parameters(self):
         for name, m in self.named_modules():
