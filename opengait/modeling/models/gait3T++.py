@@ -269,7 +269,7 @@ class ske_DeepGaitV2(nn.Module):
         return retval
 
 
-class Gait3T++(BaseModel):
+class Gait3Tpp(BaseModel):
 
     def build_network(self, model_cfg):
         # self.sil_model = sils_DeepGaitV2()

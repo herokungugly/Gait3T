@@ -69,7 +69,7 @@ loss_cfg:
     log_accuracy: true
 
 model_cfg:
-  model: Gait3T++
+  model: Gait3Tpp
   ske_model: 
     out_dim: 256
 
