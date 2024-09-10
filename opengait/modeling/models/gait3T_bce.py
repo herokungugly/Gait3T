@@ -469,16 +469,6 @@ class Gait3Tbce(BaseModel):
            new_data_list.append(cat_data)
        new_inputs = [[new_data_list], inputs[1], inputs[2], inputs[3], inputs[4]]
        return super().inputs_pretreament(new_inputs)
-
-    def get_optimizer(self, optimizer_cfg):
-        self.msg_mgr.log_info(optimizer_cfg)
-        optimizer = get_attr_from([optim], optimizer_cfg['solver'])
-        valid_arg = get_valid_args(optimizer, optimizer_cfg, ['solver'])
-        optimizer = optimizer(
-            filter(lambda p: p.requires_grad, self.parameters()), **valid_arg)
-        for param_group in optimizer.param_groups:
-            print(param_group['lr'])
-        return optimizer
     
     def log_grad(self):
         grad_dict = {}
