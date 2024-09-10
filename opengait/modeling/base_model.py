@@ -227,6 +227,8 @@ class BaseModel(MetaModel, nn.Module):
         valid_arg = get_valid_args(optimizer, optimizer_cfg, ['solver'])
         optimizer = optimizer(
             filter(lambda p: p.requires_grad, self.parameters()), **valid_arg)
+        for param_group in optimizer.param_groups:
+            print(param_group['lr'])
         return optimizer
 
     def get_scheduler(self, scheduler_cfg):
