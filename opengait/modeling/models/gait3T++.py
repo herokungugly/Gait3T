@@ -342,8 +342,6 @@ class Gait3Tpp(BaseModel):
         sil_feat = self.sil_model(([sils], labs, typs, vies, seqL))['training_feat']
         ske_feat = self.ske_model(([maps], labs, typs, vies, seqL))['training_feat']
 
-        sil_logits = sil_feat['softmax']['logits']
-        ske_logits = ske_feat['softmax']['logits']
         sil_embed = sil_feat['triplet']['embeddings']
         ske_embed = ske_feat['triplet']['embeddings']
         feat = torch.cat((sil_embed, ske_embed), dim=1)
