@@ -471,7 +471,7 @@ class Gait3Tonion(BaseModel):
                 {"params": model.ske_model.FCs.parameters(), "lr": 1e-3},
             ],
             lr=1e-4,
-            weight_decay: 1.0e-5,
+            weight_decay=1.0e-5,
         )
         return optimizer
          
