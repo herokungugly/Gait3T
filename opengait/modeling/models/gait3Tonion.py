@@ -2,6 +2,7 @@ import torch.nn.functional as F
 import copy
 import torch
 import torch.nn as nn
+from torch.optim import Adam
 import numpy as np
 from ..base_model import BaseModel
 from ..modules import SetBlockWrapper, HorizontalPoolingPyramid, PackSequenceWrapper, SeparateFCs, SeparateBNNecks, \
@@ -453,6 +454,26 @@ class Gait3Tbce(BaseModel):
             if tower_name[0] in self.no_grad_list:
                 for param in m.parameters():
                     param.requires_grad = False
+    
+    
+    def get_optimizer(self, optimizer_cfg):
+        optimizer = optim = Adam(
+            [
+                {"params": model.sil_model.layer2.parameters(), "lr": 1e-4},
+                {"params": model.sil_model.layer3.parameters(), "lr": 1e-3},
+                {"params": model.sil_model.layer4.parameters(), "lr": 1e-3},
+                {"params": model.sil_model.BNNecks.parameters(), "lr": 1e-3},
+                {"params": model.sil_model.FCs.parameters(), "lr": 1e-3},
+                {"params": model.ske_model.layer2.parameters(), "lr": 1e-4},
+                {"params": model.ske_model.layer3.parameters(), "lr": 1e-3},
+                {"params": model.ske_model.layer4.parameters(), "lr": 1e-3},
+                {"params": model.ske_model.BNNecks.parameters(), "lr": 1e-3},
+                {"params": model.ske_model.FCs.parameters(), "lr": 1e-3},
+            ],
+            lr=1e-4,
+            weight_decay: 1.0e-5,
+        )
+        return optimizer
          
     def inputs_pretreament(self, inputs):
        ### Ensure the same data augmentation for heatmap and silhouette
