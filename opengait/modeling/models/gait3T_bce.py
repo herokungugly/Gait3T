@@ -10,7 +10,7 @@ from einops import rearrange
 # from .deepgaitv2 import DeepGaitV2
 import sys
 sys.path.append("...")
-from utils import config_loader
+from utils import config_loader, get_valid_args, get_attr_from
 import torch.utils.checkpoint as checkpoint
 
 blocks_map = {
@@ -453,6 +453,15 @@ class Gait3Tbce(BaseModel):
             if tower_name[0] in self.no_grad_list:
                 for param in m.parameters():
                     param.requires_grad = False
+    
+    
+    def get_optimizer(self, optimizer_cfg):
+        self.msg_mgr.log_info(optimizer_cfg)
+        optimizer = get_attr_from([optim], optimizer_cfg['solver'])
+        layered_cfg = optimizer_cfg['layers']
+        optimizer = optimizer(
+            filter(lambda p: p.requires_grad, self.parameters()), **valid_arg)
+        return optimizer
          
     def inputs_pretreament(self, inputs):
        ### Ensure the same data augmentation for heatmap and silhouette
