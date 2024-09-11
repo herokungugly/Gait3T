@@ -225,8 +225,10 @@ class BaseModel(MetaModel, nn.Module):
         self.msg_mgr.log_info(optimizer_cfg)
         optimizer = get_attr_from([optim], optimizer_cfg['solver'])
         valid_arg = get_valid_args(optimizer, optimizer_cfg, ['solver'])
+        print(self.parameters())
         optimizer = optimizer(
             filter(lambda p: p.requires_grad, self.parameters()), **valid_arg)
+        print(filter(lambda p: p.requires_grad, self.parameters()))
         for i, param_group in enumerate(optimizer.param_groups):
             print(f"Param group {i}:")
             print(f"  lr: {param_group['lr']}")
