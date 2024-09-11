@@ -419,7 +419,7 @@ class sils_Frozen(nn.Module):
         return retval
 
 
-class Gait3Tbce(BaseModel):
+class Gait3Tonion(BaseModel):
 
     def build_network(self, model_cfg):
         # self.sil_model = sils_DeepGaitV2()
